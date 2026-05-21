@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\PresenceController;
+use App\Http\Controllers\ShiftController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,5 +16,16 @@ use App\Http\Controllers\AbsensiController;
 |
 */
 
+Route::get('/dashboard', function () {
+    return view('Admin.dashboard');
+});
+
+Route::resource('/shift', ShiftController::class);
+Route::resource('/karyawan', EmployeeController::class);
+Route::resource('/presensi', PresenceController::class);
+
+Route::get('/test', function () {
+    return view('welcome');
+});
 Route::get('/', [AbsensiController::class, 'index']);
 Route::post('/absen/proses', [AbsensiController::class, 'proses']);
