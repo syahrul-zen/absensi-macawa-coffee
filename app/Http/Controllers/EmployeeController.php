@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\Shift;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class EmployeeController extends Controller
 {
@@ -12,7 +15,10 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        return view('Admin.Karyawan.index');
+        return view('Admin.Karyawan.index', [
+            'shifts' => Shift::all(),
+            'employees' => Employee::with('shift')->latest()->get(),
+        ]);
     }
 
     /**
@@ -28,7 +34,39 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required|string|max:150',
+            'email' => 'required|email|max:100|unique:employees,email', // unik di tabel karyawans
+            'password' => 'required|string|min:8',
+            'jabatan' => 'required|in:Barista,Kitchen Staff,Cashier',
+            'shift_id' => 'required|exists:shifts,id', // wajib ada di tabel shifts
+        ], [
+            'nama.required' => 'Nama lengkap wajib diisi.',
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format alamat email tidak valid.',
+            'email.unique' => 'Email ini sudah terdaftar sebagai karyawan.',
+            'password.required' => 'Password login wajib ditentukan.',
+            'password.min' => 'Password minimal harus 8 karakter.',
+            'jabatan.required' => 'Pilih salah satu jabatan posisi.',
+            'shift_id.required' => 'Tentukan alokasi shift kerja utama.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // Eksekusi penyimpanan data karyawan baru
+        Employee::create([
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'password' => Hash::make($request->password), // Password wajib di-hash/enkripsi demi keamanan
+            'jabatan' => $request->jabatan,
+            'shift_id' => $request->shift_id,
+        ]);
+
+        return redirect()->back()->with('success', 'Anggota kru baru berhasil didaftarkan.');
     }
 
     /**
@@ -50,16 +88,53 @@ class EmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Employee $employee)
+    public function update(Request $request, Employee $karyawan)
     {
-        //
+
+        $validatedData = $request->validate([
+            'nama' => 'required|string|max:150',
+            'email' => 'required|email|max:100|unique:employees,email,'.$karyawan->id,
+            'password' => 'nullable|string|min:8',
+            'jabatan' => 'required|in:Barista,Kitchen Staff,Cashier',
+            'shift_id' => 'required|exists:shifts,id',
+        ], [
+            'nama.required' => 'Nama lengkap wajib diisi.',
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format alamat email tidak valid.',
+            'email.unique' => 'Email ini sudah digunakan oleh karyawan lain.',
+            'password.min' => 'Password baru minimal harus 8 karakter.',
+            'jabatan.required' => 'Pilih posisi jabatan karyawan.',
+            'shift_id.required' => 'Tentukan alokasi shift kerja utama.',
+        ]);
+
+        // Siapkan array data yang akan diupdate
+        $updateData = [
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'jabatan' => $request->jabatan,
+            'shift_id' => $request->shift_id,
+        ];
+
+        // Jika input password diisi, enkripsi lalu masukkan ke data update
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($request->password);
+        }
+
+        $karyawan->update($updateData);
+
+        return redirect()->back()->with('success', 'Data karyawan '.$karyawan->nama.' berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Employee $employee)
+    public function destroy(Employee $karyawan)
     {
-        //
+
+        $nama = $karyawan->nama;
+
+        $karyawan->delete();
+
+        return back()->with('success', 'Data Karyawan '.$nama.' berhasil dihapus');
     }
 }
