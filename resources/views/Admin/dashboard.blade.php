@@ -1,70 +1,161 @@
-@extends("Admin.Layouts.main")
+@extends('Admin.Layouts.main')
 
-@section("title", "Dashboard")
+@section('title', 'Dashboard Utama Admin')
 
-@section("content")
-    <!-- Header Page -->
-    <div>
-        <h2 class="text-xl font-bold tracking-tight text-slate-900">Ringkasan Hari Ini</h2>
-        <p class="mt-0.5 text-xs font-medium text-slate-400">Metrik operasional kehadiran kru Macawa Coffee.</p>
+@section('content')
+    <div class="mb-6">
+        <h2 class="text-xl font-black text-slate-800 tracking-tight">Dashboard Ringkasan</h2>
+        <p class="text-xs font-medium text-slate-400">Analisis cepat kondisi kehadiran kru dan tren kedisiplinan Macawa
+            Coffee.</p>
     </div>
 
-    <!-- Stats Widgets -->
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <div class="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div
+            class="bg-white p-4 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex items-center gap-4">
+            <div
+                class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                👤</div>
             <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Karyawan</p>
-                <h3 class="mt-1 text-2xl font-black text-slate-800">{{ $totalKaryawan ?? 0 }}</h3>
-            </div>
-            <div class="text-macawa-red flex h-10 w-10 items-center justify-center rounded-xl bg-red-50">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                    stroke="currentColor" class="h-5 w-5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-                </svg>
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Sudah Masuk</span>
+                <span class="text-lg font-black text-slate-800">{{ $hadirHariIni }} <span
+                        class="text-xs font-medium text-slate-400">kru</span></span>
             </div>
         </div>
 
-        <div class="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-            <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Hadir</p>
-                <h3 class="mt-1 text-2xl font-black text-emerald-600">{{ $totalHadir ?? 0 }}</h3>
+        <div
+            class="bg-white p-4 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-xs font-bold">⏰
             </div>
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                    stroke="currentColor" class="h-5 w-5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+            <div>
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Terlambat Hari Ini</span>
+                <span class="text-lg font-black text-slate-800">{{ $terlambatHariIni }} <span
+                        class="text-xs font-medium text-slate-400">kru</span></span>
             </div>
         </div>
 
-        <div class="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+        <div
+            class="bg-white p-4 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xs font-bold">
+                📄</div>
             <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Terlambat</p>
-                <h3 class="mt-1 text-2xl font-black text-amber-500">{{ $totalTerlambat ?? 0 }}</h3>
-            </div>
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-500">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                    stroke="currentColor" class="h-5 w-5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Sedang Izin</span>
+                <span class="text-lg font-black text-slate-800">{{ $izinHariIni }} <span
+                        class="text-xs font-medium text-slate-400">kru</span></span>
             </div>
         </div>
 
-        <div class="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+        <div
+            class="bg-white p-4 rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] flex items-center gap-4">
+            <div
+                class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold">
+                ❓</div>
             <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Absen / Izin</p>
-                <h3 class="mt-1 text-2xl font-black text-slate-400">{{ $totalAbsen ?? 0 }}</h3>
-            </div>
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                    stroke="currentColor" class="h-5 w-5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Belum Datang / Alpa</span>
+                <span class="text-lg font-black text-slate-800">{{ $belumAbsenHariIni }} <span
+                        class="text-xs font-medium text-slate-400">kru</span></span>
             </div>
         </div>
     </div>
+
+    <div class="card bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl border border-slate-100/60 p-5">
+        <div class="mb-4">
+            <h3 class="text-sm font-black text-slate-800 tracking-tight">Grafik Tren Kehadiran (7 Hari Terakhir)</h3>
+            <p class="text-[11px] font-medium text-slate-400">Visualisasi perbandingan tingkat kedisiplinan kru dari hari ke
+                hari.</p>
+        </div>
+
+        <div class="w-full h-64 sm:h-80">
+            <canvas id="trenAbsensiChart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('trenAbsensiChart').getContext('2d');
+
+            // Tangkap data array terpisah dari controller
+            const labelHari = {!! json_encode($grafikLabels) !!};
+            const dataTepatWaktu = {!! json_encode($grafikTepatWaktu) !!};
+            const dataTerlambat = {!! json_encode($grafikTerlambat) !!};
+            const dataIzin = {!! json_encode($grafikIzin) !!}; // Tambahan baru
+            const dataAlpa = {!! json_encode($grafikAlpa) !!}; // Tambahan baru
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labelHari,
+                    datasets: [{
+                            label: 'Tepat Waktu',
+                            data: dataTepatWaktu,
+                            backgroundColor: '#10b981', // Emerald-500 (Hijau)
+                            borderRadius: 5
+                        },
+                        {
+                            label: 'Terlambat',
+                            data: dataTerlambat,
+                            backgroundColor: '#ef4444', // Red-500 (Merah)
+                            borderRadius: 5
+                        },
+                        {
+                            label: 'Izin / Sakit',
+                            data: dataIzin,
+                            backgroundColor: '#f59e0b', // Amber-500 (Kuning Emas)
+                            borderRadius: 5
+                        },
+                        {
+                            label: 'Alpa / Belum Datang',
+                            data: dataAlpa,
+                            backgroundColor: '#cbd5e1', // Slate-300 (Abu-abu lembut)
+                            borderRadius: 5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 11,
+                                    weight: 'bold'
+                                },
+                                usePointStyle: true,
+                                boxWidth: 6
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 10,
+                                    weight: '600'
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#f1f5f9'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
 @endsection

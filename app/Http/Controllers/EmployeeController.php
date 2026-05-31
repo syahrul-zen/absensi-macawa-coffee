@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Shift;
+use App\Models\Presence;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -87,7 +89,7 @@ class EmployeeController extends Controller
 
     /**
      * Update the specified resource in storage.
-     */
+     */ 
     public function update(Request $request, Employee $karyawan)
     {
 
@@ -137,4 +139,34 @@ class EmployeeController extends Controller
 
         return back()->with('success', 'Data Karyawan '.$nama.' berhasil dihapus');
     }
+
+    public function home() {
+
+        $karyawan = Employee::first();
+        $shift = $karyawan->shift;
+
+        // Mengunci pencatatan ke zona waktu lokal Indonesia Barat (WIB)
+        $hariIni = Carbon::today('Asia/Jakarta')->toDateString();
+        $jamSekarang = Carbon::now('Asia/Jakarta')->toTimeString();
+
+        // Cari data absensi karyawan hari ini
+        $absensiHariIni = Presence::where('employee_id', $karyawan->id)
+            ->where('tanggal', $hariIni)
+            ->first();
+
+        // Cek Apakah berada di dalam rentang waktu shift
+        // Karyawan hanya bisa absen dari jam_masuk shift sampai jam_pulang shift
+        $isDalamJamShift = ($jamSekarang >= $shift->jam_masuk && $jamSekarang <= $shift->jam_pulang);
+
+
+
+        return view('Karyawan.absensi', [
+            'karyawan' => $karyawan->load('shift'), 
+            'shift' => $shift, 
+            'absensiHariIni' => $absensiHariIni, 
+            'isDalamJamShift' => $isDalamJamShift
+        ]);
+    }
+
+    
 }

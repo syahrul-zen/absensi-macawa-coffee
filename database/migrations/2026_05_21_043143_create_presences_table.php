@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('latitude_pulang')->nullable();
             $table->string('longitude_pulang')->nullable();
             $table->integer('jarak_pulang_meter')->nullable();
+            $table->string('file_izin')->nullable();
 
             // Status Presensi
             $table->enum('status', ['Tepat Waktu', 'Terlambat', 'Alpa', 'Izin'])->default('Alpa');

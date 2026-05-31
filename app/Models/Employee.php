@@ -16,8 +16,8 @@ class Employee extends Model
         return $this->belongsTo(Shift::class);
     }
 
-    public function precense()
+    public function presence()
     {
-        return $this->hasMany(Precense::class);
+        return $this->hasMany(Presence::class);
     }
 }

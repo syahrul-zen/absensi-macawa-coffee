@@ -1,0 +1,199 @@
+@extends('Karyawan.Layouts.main')
+
+@section('title', 'Absensi Hari Ini')
+
+@section('content')
+    <div class="mb-6">
+        <h2 class="text-xl font-black text-slate-800 tracking-tight">Presensi Kehadiran</h2>
+        <p class="text-xs font-medium text-slate-400">Pencatatan jam kerja berbasis verifikasi waktu shift dan radius lokasi
+            GPS.</p>
+    </div>
+
+    @if (session('success'))
+        <div
+            class="alert alert-success bg-emerald-50 border border-emerald-200/60 p-3.5 rounded-xl text-xs font-bold text-emerald-800 mb-5">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div
+            class="alert alert-error bg-red-50 border border-red-200/60 p-3.5 rounded-xl text-xs font-bold text-red-700 mb-5">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div
+            class="card bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl overflow-hidden h-fit border border-slate-100/50">
+            <div class="bg-red-600 p-5 text-white text-center">
+                <p class="text-[10px] font-bold uppercase tracking-widest opacity-75">Waktu Kerja Real-time</p>
+                <h2 id="live-clock" class="text-3xl font-black tracking-tight my-0.5">00:00:00</h2>
+                <p id="live-date" class="text-[11px] font-semibold opacity-90">Hari, Tanggal</p>
+            </div>
+            <div class="p-4 space-y-2.5 text-xs font-semibold bg-white">
+                <div class="flex justify-between border-b border-slate-100/60 pb-2">
+                    <span class="text-slate-400">Jadwal Shift:</span>
+                    <span class="text-red-600 font-bold">{{ $shift->nama_shift }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Ketentuan Jam:</span>
+                    <span class="text-slate-800 font-bold">{{ \Carbon\Carbon::parse($shift->jam_masuk)->format('H:i') }} -
+                        {{ \Carbon\Carbon::parse($shift->jam_pulang)->format('H:i') }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="md:col-span-2 card bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl p-6 justify-center border border-slate-100/50">
+
+            @if ($absensiHariIni && $absensiHariIni->status == 'Izin')
+                <div class="p-6 bg-yellow-50/60 border border-yellow-200 rounded-xl text-center">
+                    <span class="text-yellow-700 font-black text-sm block">STATUS HARI INI: IZIN / SAKIT</span>
+                    <p class="text-xs text-slate-500 font-medium mt-1">Permohonan dispensasi Anda telah terdata:
+                        "{{ $absensiHariIni->keterangan }}"</p>
+                </div>
+            @else
+                <div class="text-center md:text-left mb-5">
+                    <span class="text-[11px] font-bold tracking-wider text-slate-400 uppercase">Status Kehadiran Hari
+                        Ini</span>
+                    <div class="mt-1">
+                        @if ($absensiHariIni)
+                            <span
+                                class="badge bg-emerald-100 text-emerald-700 border-none font-black text-xs px-3 py-2.5 rounded-lg">{{ strtoupper($absensiHariIni->status) }}</span>
+                        @else
+                            <span
+                                class="badge bg-red-100 text-red-600 border-none font-black text-xs px-3 py-2.5 rounded-lg">BELUM
+                                ABSEN</span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    @if (!$absensiHariIni)
+                        <form action="{{ url('/absen-masuk') }}" method="POST" id="form-absen-masuk">
+                            @csrf
+                            <input type="hidden" name="latitude" id="input-lat">
+                            <input type="hidden" name="longitude" id="input-lon">
+
+                            <button type="button" onclick="getLokasiKaryawan()" {{ !$isDalamJamShift ? 'disabled' : '' }}
+                                class="btn bg-red-600 hover:bg-red-700 border-none text-white w-full rounded-xl font-bold text-xs h-12 normal-case disabled:bg-slate-100 disabled:text-slate-400">
+                                {{ $isDalamJamShift ? '✔ Kirim Absen Masuk (Verifikasi Lokasi)' : '🔒 Tombol Terkunci (Di Luar Jam Shift)' }}
+                            </button>
+                        </form>
+
+                        <button type="button" onclick="modal_izin_karyawan.showModal()"
+                            class="text-xs text-red-500 font-bold underline cursor-pointer mt-2 text-center hover:text-red-700 block mx-auto bg-transparent border-none">
+                            Ajukan Surat Izin / Sakit Jika Berhalangan Hadir
+                        </button>
+                    @elseif($absensiHariIni && is_null($absensiHariIni->jam_pulang_asli))
+                        <form action="{{ url('/absen-pulang') }}" method="POST" id="form-absen-pulang">
+                            @csrf
+                            <input type="hidden" name="latitude_pulang" id="input-lat-pulang">
+                            <input type="hidden" name="longitude_pulang" id="input-lon-pulang">
+
+                            <button type="button" onclick="getLokasiPulang()"
+                                class="btn bg-slate-800 hover:bg-slate-900 border-none text-white w-full rounded-xl font-bold text-xs h-12 normal-case">
+                                👋 Catat Absen Pulang Kerja
+                            </button>
+                        </form>
+                    @else
+                        <div
+                            class="p-4 bg-emerald-50 border border-emerald-100 text-emerald-800 font-bold text-xs rounded-xl text-center">
+                            🎉 Absensi hari ini selesai. Selamat beristirahat dari tugas shift Anda!
+                        </div>
+                    @endif
+                </div>
+            @endif
+
+        </div>
+    </div>
+
+    <dialog id="modal_izin_karyawan" class="modal backdrop:backdrop-blur-sm">
+        <div class="modal-box max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+            <h3 class="text-base font-bold text-slate-900">Form Pengajuan Izin / Sakit</h3>
+            <form action="{{ url('/absen-izin') }}" method="POST" enctype="multipart/form-data"
+                class="mt-4 space-y-4 text-left">
+                @csrf
+                <div class="form-control">
+                    <label class="label-text mb-1 text-xs font-bold text-slate-500">Alasan Tidak Hadir</label>
+                    <textarea name="keterangan" placeholder="Contoh: Demam tinggi, perlu istirahat dokter."
+                        class="textarea textarea-bordered focus:outline-red-600 w-full rounded-xl text-xs h-20 bg-white" required></textarea>
+                </div>
+                <div class="form-control">
+                    <label class="label-text mb-1 text-xs font-bold text-slate-500">Upload Surat Keterangan / Bukti
+                        Image</label>
+                    <input type="file" name="file_izin" accept="application/pdf"
+                        class="file-input file-input-bordered focus:outline-red-600 w-full rounded-xl text-xs bg-white" />
+                </div>
+                <div class="modal-action mt-6 gap-2">
+                    <button type="button" onclick="modal_izin_karyawan.close()"
+                        class="btn btn-ghost rounded-xl text-xs font-semibold normal-case">Batal</button>
+                    <button type="submit"
+                        class="btn bg-red-600 rounded-xl border-none px-6 text-xs font-bold normal-case text-white hover:bg-red-700">Kirim
+                        Permohonan</button>
+                </div>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop bg-slate-900/40"><button>close</button></form>
+    </dialog>
+
+    <script>
+        // 1. Live Clock Running
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const elClock = document.getElementById('live-clock');
+            if (elClock) elClock.textContent = `${hours}:${minutes}:${seconds}`;
+
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            const elDate = document.getElementById('live-date');
+            if (elDate) elDate.textContent = now.toLocaleDateString('id-ID', options);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // 2. Ambil Geolocation Browser saat tombol Masuk ditekan
+        function getLokasiKaryawan() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Set nilai koordinat ke hidden input form
+                    document.getElementById('input-lat').value = position.coords.latitude;
+                    document.getElementById('input-lon').value = position.coords.longitude;
+
+                    // Kirim form secara otomatis ke backend setelah data koordinat terisi
+                    document.getElementById('form-absen-masuk').submit();
+                }, function(error) {
+                    alert("Gagal mengambil lokasi. Pastikan izin lokasi/GPS pada browser Anda aktif.");
+                });
+            } else {
+                alert("Browser Anda tidak mendukung fitur pelacakan GPS.");
+            }
+        }
+
+        // 2. FUNGSI BARU: Ambil Lokasi untuk PULANG
+        function getLokasiPulang() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Masukkan data ke input hidden milik form pulang
+                    document.getElementById('input-lat-pulang').value = position.coords.latitude;
+                    document.getElementById('input-lon-pulang').value = position.coords.longitude;
+
+                    // Submit form pulang
+                    document.getElementById('form-absen-pulang').submit();
+                }, function(error) {
+                    alert("Gagal mengambil lokasi pulang. Pastikan izin lokasi/GPS aktif saat pulang kerja.");
+                });
+            } else {
+                alert("Browser Anda tidak mendukung fitur pelacakan GPS.");
+            }
+        }
+    </script>
+@endsection

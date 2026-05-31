@@ -10,10 +10,10 @@ class Presence extends Model
     use HasFactory;
 
     protected $fillable = [
-        'karyawan_id', 'tanggal',
-        'jam_masuk_asli', 'latitude_masuk', 'longitude_masuk', 'jarap_masuk_meter',
+        'employee_id', 'tanggal',
+        'jam_masuk_asli', 'latitude_masuk', 'longitude_masuk', 'jarak_masuk_meter',
         'jam_pulang_asli', 'latitude_pulang', 'longitude_pulang', 'jarak_pulang_meter',
-        'status', 'keterangan',
+        'status', 'keterangan', 'file_izin'
     ];
 
     // Relasi: Data absen ini milik seorang karyawan
@@ -21,4 +21,5 @@ class Presence extends Model
     {
         return $this->belongsTo(Employee::class);
     }
+
 }

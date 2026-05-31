@@ -16,16 +16,25 @@ use App\Http\Controllers\ShiftController;
 |
 */
 
-Route::get('/dashboard', function () {
-    return view('Admin.dashboard');
-});
+// Route::get('/dashboard', function () {
+//     return view('Admin.dashboard');
+// });
+
+Route::get('/dashboard', [PresenceController::class, 'dashboard']);
 
 Route::resource('/shift', ShiftController::class);
 Route::resource('/karyawan', EmployeeController::class);
 Route::resource('/presensi', PresenceController::class);
 
-Route::get('/test', function () {
-    return view('welcome');
-});
 Route::get('/', [AbsensiController::class, 'index']);
 Route::post('/absen/proses', [AbsensiController::class, 'proses']);
+Route::get('/laporan', [PresenceController::class, 'cetakLaporan']);
+
+// ======================================================================
+
+// Karyawan :
+Route::get('/home', [EmployeeController::class, 'home']);
+Route::post('/absen-masuk', [AbsensiController::class, 'absenMasuk']);
+Route::post('/absen-pulang', [AbsensiController::class, 'absenPulang']);
+Route::post('/absen-izin', [AbsensiController::class, 'absenIzin']);
+
