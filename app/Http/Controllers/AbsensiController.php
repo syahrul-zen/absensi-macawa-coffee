@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Presence;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth; 
 use App\Models\Employee;
 use Carbon\Carbon;
 
@@ -66,7 +66,7 @@ class AbsensiController extends Controller
             'longitude' => 'required|numeric',
         ]);
 
-        $karyawan = Employee::first();
+        $karyawan = Auth::guard('employee')->user();
 
         $shift = $karyawan->shift;
         $hariIni = Carbon::today()->toDateString();
@@ -123,7 +123,7 @@ class AbsensiController extends Controller
             'longitude_pulang' => 'required|numeric',
         ]);
 
-        $karyawan = Employee::first();
+        $karyawan = Auth::guard('employee')->user();
         $shift = $karyawan->shift; // Mengambil data shift karyawan
         $hariIni = Carbon::today('Asia/Jakarta')->toDateString();
         $jamSekarang = Carbon::now('Asia/Jakarta');
@@ -173,7 +173,7 @@ class AbsensiController extends Controller
             'keterangan' => 'required|max:210'
         ]);
 
-        $karyawan = Employee::first();
+        $karyawan = Auth::guard('employee')->user();
         $hariIni = Carbon::today('Asia/Jakarta')->toDateString();
 
         $absensi = Presence::where('employee_id', $karyawan->id)

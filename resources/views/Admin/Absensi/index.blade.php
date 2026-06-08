@@ -78,18 +78,21 @@
     <!-- ========================================== -->
     <!-- KONTROL FILTER SAKTI BARIS UTAMA (Perbarui Bagian Ini) -->
     <div class="flex justify-end gap-2 mb-4">
-        <!-- TOMBOL BARU: CETAK REKAP MODAL -->
-        <button type="button" onclick="modal_cetak_laporan.showModal()"
-            class="btn bg-slate-900 hover:bg-slate-950 border-none text-white font-bold text-xs rounded-xl px-4 h-10 shadow-sm normal-case flex items-center gap-2">
-            🖨️ Cetak Rekap Karyawan
-        </button>
+
+        @if (!auth()->guard('admin')->user()->is_admin)
+            <!-- TOMBOL BARU: CETAK REKAP MODAL -->
+            <button type="button" onclick="modal_cetak_laporan.showModal()"
+                class="btn bg-slate-900 hover:bg-slate-950 border-none text-white font-bold text-xs rounded-xl px-4 h-10 shadow-sm normal-case flex items-center gap-2">
+                🖨️ Cetak Rekap Karyawan
+            </button>
+        @endif
 
         <button type="button" onclick="toggleFilterDrawer()"
             class="btn bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs rounded-xl px-4 h-10 shadow-sm normal-case flex items-center gap-2">
             🎛️ Filter Saringan Data
         </button>
 
-        <a href="{{ url('/admin/absensi') }}"
+        <a href="{{ url('/presensi') }}"
             class="btn btn-ghost hover:bg-slate-100 text-slate-400 font-bold text-xs rounded-xl h-10 normal-case">
             Reset Hari Ini
         </a>

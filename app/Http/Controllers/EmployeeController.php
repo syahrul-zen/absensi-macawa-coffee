@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Shift;
+use App\Models\User;
 use App\Models\Presence;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class EmployeeController extends Controller
 {
@@ -20,6 +24,7 @@ class EmployeeController extends Controller
         return view('Admin.Karyawan.index', [
             'shifts' => Shift::all(),
             'employees' => Employee::with('shift')->latest()->get(),
+            'dataOwner' => User::find(2)
         ]);
     }
 
@@ -142,7 +147,7 @@ class EmployeeController extends Controller
 
     public function home() {
 
-        $karyawan = Employee::first();
+        $karyawan = Auth::guard('employee')->user();
         $shift = $karyawan->shift;
 
         // Mengunci pencatatan ke zona waktu lokal Indonesia Barat (WIB)
@@ -168,5 +173,90 @@ class EmployeeController extends Controller
         ]);
     }
 
+    public function setAdmin(Request $request) {
+
+        // 1. Ambil data admin yang sedang login
+        $admin = User::first();
+
+        // Gunakan Validator manual agar bisa membungkus error ke dalam 'adminAccount'
+        $validator = Validator::make($request->all(), [
+            'email'    => 'required|email|unique:admin,email,' . $admin->id .'|unique:employees,email',
+            'password' => 'nullable|max:10', // Ini adalah kolom password (saat ini) untuk konfirmasi
+        ], [
+            'email.unique' => 'Alamat email ini sudah digunakan oleh akun lain.',
+            'password.required' => 'Anda wajib memasukkan password saat ini untuk konfirmasi keamanan.',
+        ]);
+
+        // Jika validasi gagal, lempar ke 'adminAccount'
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator, 'adminAccount')
+                ->withInput();
+        }
+        // Simpan perubahan (Hanya email yang berubah)
+        
+        $admin->email = $request->email;
+        $admin->save();
+
+        return redirect()->back()->with('success', 'Akun admin berhasil diperbarui!');
+    }
+
+    public function setOwner(Request $request) {
+
+        // 1. Ambil data admin yang sedang login
+        $admin = User::find(2);
+
+        // Gunakan Validator manual agar bisa membungkus error ke dalam 'adminAccount'
+        $validator = Validator::make($request->all(), [
+            'email'    => 'required|email|unique:admin,email,' . $admin->id .'|unique:employees,email',
+            'password' => 'nullable|max:10', // Ini adalah kolom password (saat ini) untuk konfirmasi
+        ], [
+            'email.unique' => 'Alamat email ini sudah digunakan oleh akun lain.',
+            'password.required' => 'Anda wajib memasukkan password saat ini untuk konfirmasi keamanan.',
+        ]);
+
+        // Jika validasi gagal, lempar ke 'adminAccount'
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator, 'ownerAccount')
+                ->withInput();
+        }
+        // Simpan perubahan (Hanya email yang berubah)
+        
+        $admin->email = $request->email;
+        $admin->save();
+
+        return redirect()->back()->with('success', 'Akun Owner berhasil diperbarui!');
+    }
+
+    public function riwayat(Request $request) {
+        // $karyawan = auth()->user();
+        $karyawan = Auth::guard('employee')->user();
+    
+        // Ambil filter bulan & tahun dari request, default ke bulan & tahun sekarang (Mei 2026)
+        $bulan = $request->get('bulan', Carbon::now()->month);
+        $tahun = $request->get('tahun', Carbon::now()->year);
+
+        // 1. Ambil list riwayat absensi untuk tabel utama (70%)
+        $riwayatAbsensi = Presence::where('employee_id', $karyawan->id)
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->orderBy('tanggal', 'desc')
+            ->get();
+
+        // 2. Hitung statistik untuk ringkasan sidebar (30%)
+        $totalHadir = $riwayatAbsensi->whereIn('status', ['Tepat Waktu', 'Terlambat'])->count();
+        $totalIzin  = $riwayatAbsensi->where('status', 'Izin')->count();
+        $totalAlpa  = $riwayatAbsensi->where('status', 'Alpa')->count();
+        
+        return view('Karyawan.riwayat', compact(
+            'riwayatAbsensi', 
+            'totalHadir', 
+            'totalIzin', 
+            'totalAlpa', 
+            'bulan',
+            'tahun'
+        ));
+    }
     
 }

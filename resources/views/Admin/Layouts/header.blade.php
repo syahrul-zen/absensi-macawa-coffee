@@ -11,7 +11,7 @@
         </label>
 
         <div class="pl-2 text-sm font-semibold text-slate-800">
-            @yield("title", "Dashboard")
+            @yield('title', 'Dashboard')
         </div>
     </div>
 
@@ -21,3 +21,43 @@
         <div class="text-macawa-red text-[10px] font-bold uppercase tracking-wider">Macawa Coffee</div>
     </div>
 </header>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function perbaruiJam() {
+            const elemenJam = document.getElementById('live-clock-digital');
+            if (!elemenJam) return;
+
+            const sekarang = new Date();
+
+            // Mengambil jam, menit, dan detik
+            let jam = sekarang.getHours();
+            let menit = sekarang.getMinutes();
+            let detik = sekarang.getSeconds();
+
+            // Menentukan format AM atau PM
+            const ampm = jam >= 12 ? 'PM' : 'AM';
+
+            // Mengubah format dari 24 jam menjadi 12 jam
+            jam = jam % 12;
+            jam = jam ? jam : 12; // Jika jam '0', ubah menjadi '12'
+
+            // Menambahkan angka 0 di depan jika angka satuan (contoh: 07, 09)
+            jam = jam < 10 ? '0' + jam : jam;
+            menit = menit < 10 ? '0' + menit : menit;
+            detik = detik < 10 ? '0' + detik : detik;
+
+            // Menggabungkan menjadi format teks penuh
+            const waktuString = `${jam}:${menit}:${detik} ${ampm}`;
+
+            // Render ke dalam komponen HTML
+            elemenJam.textContent = waktuString;
+        }
+
+        // Jalankan fungsi pertama kali saat halaman dimuat
+        perbaruiJam();
+
+        // Perbarui jam otomatis setiap 1 detik (1000 milidetik)
+        setInterval(perbaruiJam, 1000);
+    });
+</script>

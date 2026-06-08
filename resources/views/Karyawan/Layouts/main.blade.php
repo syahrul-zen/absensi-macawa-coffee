@@ -84,7 +84,7 @@
                     <!-- Menu List -->
                     <p class="px-4 text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-3">Menu Utama</p>
                     <ul class="space-y-1">
-                        <li>
+                        {{-- <li>
                             <a href="{{ url('/karyawan/dashboard') }}"
                                 class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold transition-all {{ Request::is('karyawan/dashboard') ? 'bg-red-50 text-red-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800' }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -94,10 +94,10 @@
                                 </svg>
                                 Dashboard
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
-                            <a href="{{ url('/karyawan/absensi') }}"
-                                class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold transition-all {{ Request::is('karyawan/absensi') ? 'bg-red-50 text-red-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800' }}">
+                            <a href="{{ url('/home') }}"
+                                class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold transition-all {{ Request::is('home') ? 'bg-red-50 text-red-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800' }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -107,8 +107,8 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ url('/karyawan/riwayat') }}"
-                                class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold transition-all {{ Request::is('karyawan/riwayat') ? 'bg-red-50 text-red-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800' }}">
+                            <a href="{{ url('/riwayat-absensi') }}"
+                                class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold transition-all {{ Request::is('riwayat-absensi') ? 'bg-red-50 text-red-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800' }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -117,7 +117,7 @@
                                 Riwayat Absensi
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="{{ url('/karyawan/profil') }}"
                                 class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold transition-all {{ Request::is('karyawan/profil') ? 'bg-red-50 text-red-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800' }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -127,7 +127,7 @@
                                 </svg>
                                 Profil Saya
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </div>
 
@@ -144,7 +144,7 @@
                             <h4 class="text-xs font-bold text-slate-800 truncate">
                                 {{ 'Bambang Pamungkas' ?? 'Nama Karyawan' }}</h4>
                             <span
-                                class="text-[10px] font-semibold text-slate-400 block mt-0.5">{{ Auth::user()->jabatan ?? 'Staf' }}</span>
+                                class="text-[10px] font-semibold text-slate-400 block mt-0.5">{{ Auth::guard('employee')->user()->jabatan ?? 'Staf' }}</span>
                         </div>
                     </div>
 

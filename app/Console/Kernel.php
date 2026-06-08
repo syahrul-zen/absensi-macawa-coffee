@@ -37,7 +37,7 @@ class Kernel extends ConsoleKernel
                     'jam_pulang_asli'  => null,
                 ]);
             }
-        })->dailyAt('23:50');
+        })->dailyAt('13:01');
     }
 
     /**
