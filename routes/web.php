@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CordiantController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\ShiftController;
@@ -28,11 +29,15 @@ use App\Models\Presence;
 // });
 
 
+
+
 Route::get('/', [PresenceController::class, 'dashboard'])->middleware('isAdmin');
 
 Route::resource('/shift', ShiftController::class)->middleware('isAdmin')->except(['create', 'show', 'edit']);
 Route::resource('/karyawan', EmployeeController::class)->middleware('isAdmin')->except(['create', 'show', 'edit']);
 Route::resource('/presensi', PresenceController::class)->middleware('isAdmin')->except(['create', 'store', 'edit', 'update', 'destroy']);
+
+Route::put('/set-koordinat', [CordiantController::class, 'updateCordinat']);
 
 // Route::get('/', [AbsensiController::class, 'index']);
 Route::post('/absen/proses', [AbsensiController::class, 'proses'])->middleware('isAdmin');

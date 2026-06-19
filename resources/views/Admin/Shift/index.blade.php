@@ -1,11 +1,11 @@
-@extends("Admin.Layouts.main")
+@extends('Admin.Layouts.main')
 
-@section("title", "Kelola Shift")
+@section('title', 'Kelola Shift')
 
-@section("content")
+@section('content')
     <div class="w-full space-y-4">
         {{-- Alert Berhasil (Ditampilkan hanya jika ada session success) --}}
-        @if (session("success"))
+        @if (session('success'))
             <div role="alert"
                 class="alert alert-success flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 stroke-emerald-600" fill="none"
@@ -15,7 +15,7 @@
                 </svg>
                 <div class="flex flex-col">
                     <span class="text-xs font-bold text-emerald-800">Berhasil!</span>
-                    <span class="text-[11px] font-medium text-emerald-600">{{ session("success") }}</span>
+                    <span class="text-[11px] font-medium text-emerald-600">{{ session('success') }}</span>
                 </div>
             </div>
         @endif
@@ -26,12 +26,85 @@
                 <h2 class="text-xl font-bold tracking-tight text-slate-900">Pengaturan Jam Kerja</h2>
                 <p class="mt-0.5 text-xs font-medium text-slate-400">Kelola batasan waktu kerja operasional café.</p>
             </div>
-            <!-- DaisyUI Modal Trigger Button -->
-            <label for="modal-add-shift"
-                class="btn bg-macawa-red rounded-xl border-none text-xs font-bold normal-case text-white hover:bg-red-700">
-                + Tambah Shift Kerja
-            </label>
+
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="modal_edit_koordinat.showModal()"
+                    class="btn btn-sm bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold normal-case h-9 shadow-sm">
+                    📍 Edit Koordinat Kafe
+                </button>
+
+                <label for="modal-add-shift"
+                    class="btn bg-macawa-red rounded-xl border-none text-xs font-bold normal-case text-white hover:bg-red-700 h-9 min-h-0">
+                    + Tambah Shift Kerja
+                </label>
+            </div>
         </div>
+
+        <dialog id="modal_edit_koordinat" class="modal backdrop-blur-sm">
+            <div class="modal-box bg-white max-w-sm rounded-2xl border border-slate-100 p-6 shadow-xl">
+
+                <div class="mb-4">
+                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">Lokasi Presensi</h3>
+                    <p class="text-[11px] font-semibold text-slate-400 mt-0.5">Tentukan titik kordinat pusat Macawa Coffee
+                        untuk batasan radius absensi.</p>
+                </div>
+
+                <form action="{{ url('/set-koordinat') }}" method="POST" class="space-y-4">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="form-control w-full flex flex-col items-start">
+                        <label class="label pt-0 pb-1.5 justify-start">
+                            <span
+                                class="label-text font-bold text-slate-500 text-[11px] uppercase tracking-wide">Latitude</span>
+                        </label>
+                        <input type="text" name="latitude" required
+                            value="{{ old('latitude', $koordinat->latitude ?? '') }}" placeholder="-6.2088"
+                            class="input input-bordered bg-white text-slate-700 rounded-xl font-semibold text-xs @if ($errors->has('latitude')) border-red-500 @else border-slate-200 @endif focus:outline-none focus:border-slate-900 w-full h-10 shadow-sm" />
+
+                        @error('latitude')
+                            <div class="block w-full text-left pt-1.5 px-0.5 clear-both">
+                                <span class="text-[10px] font-bold text-red-600 block text-left">⚠️ {{ $message }}</span>
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="form-control w-full flex flex-col items-start">
+                        <label class="label pt-0 pb-1.5 justify-start">
+                            <span
+                                class="label-text font-bold text-slate-500 text-[11px] uppercase tracking-wide">Longitude</span>
+                        </label>
+                        <input type="text" name="longitude" required
+                            value="{{ old('longitude', $koordinat->longitude ?? '') }}" placeholder="106.8456"
+                            class="input input-bordered bg-white text-slate-700 rounded-xl font-semibold text-xs @if ($errors->has('longitude')) border-red-500 @else border-slate-200 @endif focus:outline-none focus:border-slate-900 w-full h-10 shadow-sm" />
+
+                        @error('longitude')
+                            <div class="block w-full text-left pt-1.5 px-0.5 clear-both">
+                                <span class="text-[10px] font-bold text-red-600 block text-left">⚠️ {{ $message }}</span>
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="modal-action gap-2 pt-2 m-0 justify-end flex">
+                        <button type="button" onclick="modal_edit_koordinat.close()"
+                            class="btn btn-ghost hover:bg-slate-100 text-slate-500 font-bold text-xs px-5 rounded-xl normal-case h-9 min-h-0 border-none">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="btn bg-slate-900 hover:bg-slate-950 border-none text-white font-bold text-xs px-6 rounded-xl normal-case h-9 min-h-0 shadow-md">
+                            Simpan Lokasi 💾
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <form method="dialog" class="modal-backdrop bg-slate-950/20">
+                <button>close</button>
+            </form>
+        </dialog>
+
+
+
     </div>
     <!-- Table Container -->
     <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
@@ -51,16 +124,16 @@
                         <tr>
                             <td class="px-6 py-4 font-semibold text-slate-900">{{ $shift->nama_shift }}</td>
                             <td class="px-6 py-4 text-xs font-medium">
-                                {{ \Carbon\Carbon::parse($shift->jam_masuk)->format("H:i") }}</td>
+                                {{ \Carbon\Carbon::parse($shift->jam_masuk)->format('H:i') }}</td>
                             <td class="px-6 py-4 text-xs font-medium">
-                                {{ \Carbon\Carbon::parse($shift->jam_pulang)->format("H:i") }}</td>
+                                {{ \Carbon\Carbon::parse($shift->jam_pulang)->format('H:i') }}</td>
                             <td class="px-6 py-4 text-center">
                                 <!-- Tombol Edit dengan data attribute -->
                                 <button type="button"
                                     class="btn-edit-shift btn btn-ghost btn-xs font-bold normal-case text-yellow-500"
                                     data-id="{{ $shift->id }}" data-nama="{{ $shift->nama_shift }}"
-                                    data-masuk="{{ \Carbon\Carbon::parse($shift->jam_masuk)->format("H:i") }}"
-                                    data-pulang="{{ \Carbon\Carbon::parse($shift->jam_pulang)->format("H:i") }}">
+                                    data-masuk="{{ \Carbon\Carbon::parse($shift->jam_masuk)->format('H:i') }}"
+                                    data-pulang="{{ \Carbon\Carbon::parse($shift->jam_pulang)->format('H:i') }}">
                                     Edit
                                 </button>
                                 <button type="button"
@@ -84,24 +157,24 @@
 
     <!-- DaisyUI Modal Component Layout -->
     <!-- Jika ada error di validasi form, otomatis tambahkan atribut 'checked' agar modal langsung timbul -->
-    <input type="checkbox" id="modal-add-shift" class="modal-toggle" {{ $errors->any() ? "checked" : "" }} />
+    <input type="checkbox" id="modal-add-shift" class="modal-toggle" {{ $errors->any() ? 'checked' : '' }} />
 
     <div class="modal">
         <div class="modal-box max-w-sm rounded-2xl bg-white p-6">
             <h3 class="text-base font-bold text-slate-900">Buat Jam Shift Baru</h3>
 
-            <form action="{{ url("/shift") }}" method="POST" class="mt-4 space-y-4">
+            <form action="{{ url('/shift') }}" method="POST" class="mt-4 space-y-4">
                 @csrf
 
                 <!-- Nama Shift -->
                 <div class="form-control">
                     <label class="label-text mb-1 text-xs font-bold text-slate-500">Nama Shift</label>
-                    <!-- value="{{ old("nama_shift") }}" berguna agar teks yang sudah diketik user tidak hilang saat error -->
-                    <input type="text" name="nama_shift" value="{{ old("nama_shift") }}"
+                    <!-- value="{{ old('nama_shift') }}" berguna agar teks yang sudah diketik user tidak hilang saat error -->
+                    <input type="text" name="nama_shift" value="{{ old('nama_shift') }}"
                         placeholder="Contoh: Shift Pagi / Barista"
-                        class="input input-bordered focus:outline-macawa-red {{ $errors->has("nama_shift") ? "border-red-500 focus:outline-red-500" : "" }} w-full rounded-xl text-xs" />
+                        class="input input-bordered focus:outline-macawa-red {{ $errors->has('nama_shift') ? 'border-red-500 focus:outline-red-500' : '' }} w-full rounded-xl text-xs" />
 
-                    @error("nama_shift")
+                    @error('nama_shift')
                         <span class="mt-1 text-[10px] font-semibold text-red-500">{{ $message }}</span>
                     @enderror
                 </div>
@@ -110,10 +183,10 @@
                     <!-- Jam Masuk -->
                     <div class="form-control">
                         <label class="label-text mb-1 text-xs font-bold text-slate-500">Jam Masuk</label>
-                        <input type="time" name="jam_masuk" value="{{ old("jam_masuk") }}"
-                            class="input input-bordered focus:outline-macawa-red {{ $errors->has("jam_masuk") ? "border-red-500 focus:outline-red-500" : "" }} w-full rounded-xl text-xs" />
+                        <input type="time" name="jam_masuk" value="{{ old('jam_masuk') }}"
+                            class="input input-bordered focus:outline-macawa-red {{ $errors->has('jam_masuk') ? 'border-red-500 focus:outline-red-500' : '' }} w-full rounded-xl text-xs" />
 
-                        @error("jam_masuk")
+                        @error('jam_masuk')
                             <span class="mt-1 text-[10px] font-semibold text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
@@ -121,10 +194,10 @@
                     <!-- Jam Pulang -->
                     <div class="form-control">
                         <label class="label-text mb-1 text-xs font-bold text-slate-500">Jam Pulang</label>
-                        <input type="time" name="jam_pulang" value="{{ old("jam_pulang") }}"
-                            class="input input-bordered focus:outline-macawa-red {{ $errors->has("jam_pulang") ? "border-red-500 focus:outline-red-500" : "" }} w-full rounded-xl text-xs" />
+                        <input type="time" name="jam_pulang" value="{{ old('jam_pulang') }}"
+                            class="input input-bordered focus:outline-macawa-red {{ $errors->has('jam_pulang') ? 'border-red-500 focus:outline-red-500' : '' }} w-full rounded-xl text-xs" />
 
-                        @error("jam_pulang")
+                        @error('jam_pulang')
                             <span class="mt-1 text-[10px] font-semibold text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
@@ -141,30 +214,30 @@
     </div>
 
     <input type="checkbox" id="modal-edit-shift" class="modal-toggle"
-        {{ $errors->any() && old("edit_id") ? "checked" : "" }} />
+        {{ $errors->any() && old('edit_id') ? 'checked' : '' }} />
 
     <div class="modal">
         <div class="modal-box max-w-sm rounded-2xl bg-white p-6 text-left">
             <h3 class="text-base font-bold text-slate-900">Ubah Jam Shift Kerja</h3>
 
             <!-- Action akan diisi secara dinamis oleh JS, default diarahkan ke URL kosong -->
-            <form id="form-edit-shift" action="{{ url("/shift/" . (old("edit_id") ?? "")) }}" method="POST"
+            <form id="form-edit-shift" action="{{ url('/shift/' . (old('edit_id') ?? '')) }}" method="POST"
                 class="mt-4 space-y-4">
                 @csrf
-                @method("PUT")
+                @method('PUT')
 
                 <!-- Hidden Input untuk menyimpan ID yang sedang diedit -->
-                <input type="hidden" name="edit_id" id="edit-shift-id" value="{{ old("edit_id") }}">
+                <input type="hidden" name="edit_id" id="edit-shift-id" value="{{ old('edit_id') }}">
 
                 <!-- Nama Shift -->
                 <div class="form-control">
                     <label class="label-text mb-1 text-xs font-bold text-slate-500">Nama Shift</label>
-                    <input type="text" name="nama_shift" id="edit-nama-shift" value="{{ old("nama_shift") }}"
+                    <input type="text" name="nama_shift" id="edit-nama-shift" value="{{ old('nama_shift') }}"
                         placeholder="Contoh: Shift Pagi / Barista"
-                        class="input input-bordered focus:outline-macawa-red {{ $errors->has("nama_shift") ? "border-red-500 focus:outline-red-500" : "" }} w-full rounded-xl text-xs"
+                        class="input input-bordered focus:outline-macawa-red {{ $errors->has('nama_shift') ? 'border-red-500 focus:outline-red-500' : '' }} w-full rounded-xl text-xs"
                         required />
 
-                    @error("nama_shift")
+                    @error('nama_shift')
                         <span class="mt-1 text-[10px] font-semibold text-red-500">{{ $message }}</span>
                     @enderror
                 </div>
@@ -173,11 +246,11 @@
                     <!-- Jam Masuk -->
                     <div class="form-control">
                         <label class="label-text mb-1 text-xs font-bold text-slate-500">Jam Masuk</label>
-                        <input type="time" name="jam_masuk" id="edit-jam-masuk" value="{{ old("jam_masuk") }}"
-                            class="input input-bordered focus:outline-macawa-red {{ $errors->has("jam_masuk") ? "border-red-500 focus:outline-red-500" : "" }} w-full rounded-xl text-xs"
+                        <input type="time" name="jam_masuk" id="edit-jam-masuk" value="{{ old('jam_masuk') }}"
+                            class="input input-bordered focus:outline-macawa-red {{ $errors->has('jam_masuk') ? 'border-red-500 focus:outline-red-500' : '' }} w-full rounded-xl text-xs"
                             required />
 
-                        @error("jam_masuk")
+                        @error('jam_masuk')
                             <span class="mt-1 text-[10px] font-semibold text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
@@ -185,11 +258,11 @@
                     <!-- Jam Pulang -->
                     <div class="form-control">
                         <label class="label-text mb-1 text-xs font-bold text-slate-500">Jam Pulang</label>
-                        <input type="time" name="jam_pulang" id="edit-jam-pulang" value="{{ old("jam_pulang") }}"
-                            class="input input-bordered focus:outline-macawa-red {{ $errors->has("jam_pulang") ? "border-red-500 focus:outline-red-500" : "" }} w-full rounded-xl text-xs"
+                        <input type="time" name="jam_pulang" id="edit-jam-pulang" value="{{ old('jam_pulang') }}"
+                            class="input input-bordered focus:outline-macawa-red {{ $errors->has('jam_pulang') ? 'border-red-500 focus:outline-red-500' : '' }} w-full rounded-xl text-xs"
                             required />
 
-                        @error("jam_pulang")
+                        @error('jam_pulang')
                             <span class="mt-1 text-[10px] font-semibold text-red-500">{{ $message }}</span>
                         @enderror
                     </div>
@@ -231,7 +304,7 @@
             <!-- Form Hapus Dinamis -->
             <form id="form-delete-shift" action="" method="POST" class="mt-6 flex justify-end gap-2">
                 @csrf
-                @method("DELETE")
+                @method('DELETE')
 
                 <label for="modal-delete-shift"
                     class="btn btn-ghost flex-1 rounded-xl text-xs font-semibold normal-case">Batal</label>
@@ -255,7 +328,7 @@
             const inputPulang = document.getElementById("edit-jam-pulang");
 
             // Basis URL untuk action form (Sesuaikan jika aplikasi Anda tidak berjalan di root folder)
-            const baseUrl = "{{ url("/shift") }}";
+            const baseUrl = "{{ url('/shift') }}";
 
             // Tangkap semua tombol edit di dalam tabel
             document.querySelectorAll(".btn-edit-shift").forEach(button => {
@@ -283,7 +356,7 @@
             // Opsional: Bersihkan form jika tombol 'Batal' diklik agar sisa error validasi hilang saat dibuka kembali
             document.getElementById("btn-cancel-edit").addEventListener("click", function() {
                 // Jika tidak ada error validasi bawaan session, form aman di-reset biasa
-                if (!{{ $errors->any() ? "true" : "false" }}) {
+                if (!{{ $errors->any() ? 'true' : 'false' }}) {
                     formEdit.reset();
                 } else {
                     // Jika ada error validasi sebelumnya, paksa bersihkan halaman agar error visual hilang saat ditutup
@@ -300,7 +373,7 @@
             const deleteShiftName = document.getElementById("delete-shift-name");
 
             // Basis URL untuk delete endpoint
-            const baseUrlDelete = "{{ url("/shift") }}";
+            const baseUrlDelete = "{{ url('/shift') }}";
 
             // Tangkap klik tombol hapus
             document.querySelectorAll(".btn-delete-shift").forEach(button => {

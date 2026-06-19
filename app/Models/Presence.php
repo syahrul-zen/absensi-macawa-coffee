@@ -13,6 +13,7 @@ class Presence extends Model
         'employee_id', 'tanggal',
         'jam_masuk_asli', 'latitude_masuk', 'longitude_masuk', 'jarak_masuk_meter',
         'jam_pulang_asli', 'latitude_pulang', 'longitude_pulang', 'jarak_pulang_meter',
+        'foto_masuk', 'foto_pulang',
         'status', 'keterangan', 'file_izin'
     ];
 

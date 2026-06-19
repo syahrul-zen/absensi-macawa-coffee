@@ -28,6 +28,9 @@ return new class extends Migration
             $table->integer('jarak_pulang_meter')->nullable();
             $table->string('file_izin')->nullable();
 
+            $table->string('foto_masuk')->nullable();
+            $table->string('foto_pulang')->nullable();
+
             // Status Presensi
             $table->enum('status', ['Tepat Waktu', 'Terlambat', 'Alpa', 'Izin'])->default('Alpa');
             $table->string('keterangan')->nullable();

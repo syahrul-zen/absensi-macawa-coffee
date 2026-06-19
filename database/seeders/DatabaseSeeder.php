@@ -31,5 +31,12 @@ class DatabaseSeeder extends Seeder
             'email' => 'owner@gmail.com',
             'password' => 'password',
         ]);
+
+        \App\Models\Cordiant::create([
+            'latitude' => '-1.6127401062230906', 
+            'longitude' => '103.57861034160142',
+        ]);
+
+
     }
 }

@@ -303,7 +303,7 @@
     <!-- ========================================== -->
     <!-- 4. MODAL POP-UP DETAIL (DAISYUI 5 DIALOG)  -->
     <!-- ========================================== -->
-    <dialog id="modal_detail_presensi" class="modal backdrop:backdrop-blur-sm">
+    {{-- <dialog id="modal_detail_presensi" class="modal backdrop:backdrop-blur-sm">
         <div class="modal-box max-w-xl bg-white rounded-2xl p-6 shadow-2xl border border-slate-100">
 
             <!-- Header Profil Karyawan -->
@@ -382,6 +382,118 @@
             </div>
         </div>
         <form method="dialog" class="modal-backdrop bg-slate-900/40"><button>close</button></form>
+    </dialog> --}}
+
+    <dialog id="modal_detail_presensi" class="modal backdrop:backdrop-blur-sm">
+        <div class="modal-box max-w-xl bg-white rounded-2xl p-6 shadow-2xl border border-slate-100">
+
+            <div class="flex items-center gap-4 border-b border-slate-100 pb-4 mb-5">
+                <div class="avatar placeholder">
+                    <div class="bg-red-600 text-white rounded-2xl w-12 h-12 font-black text-sm flex items-center justify-center shadow-sm"
+                        id="md-avatar">--</div>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-slate-900 tracking-tight" id="md-nama">Nama</h3>
+                    <p class="text-xs font-semibold text-slate-400 mt-0.5"><span id="md-jabatan">Jabatan</span> • <span
+                            id="md-email">Email</span></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-100 flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Pencatatan
+                            Masuk</span>
+                        <div class="space-y-1.5 text-xs font-semibold mb-3">
+                            <div class="flex justify-between"><span class="text-slate-400">Jam Masuk:</span><span
+                                    class="text-slate-800 font-bold" id="md-jam-masuk">00:00</span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">Status Hadir:</span><span
+                                    id="md-status-badge">--</span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">Jarak Lokasi:</span><span
+                                    class="text-slate-800 font-bold" id="md-jarak-masuk">0 m</span></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 pt-2 border-t border-slate-200/60">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Bukti Foto
+                            Masuk</span>
+                        <a id="md-link-foto-masuk" href="#" target="_blank"
+                            class="block group relative overflow-hidden rounded-xl bg-slate-900 h-28 border border-slate-200">
+                            <img id="md-foto-masuk" src=""
+                                class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 opacity-90"
+                                alt="Foto Masuk">
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-[10px] text-white font-bold transition-opacity">
+                                🔍 Buka Foto</div>
+                        </a>
+                        <div id="md-no-foto-masuk"
+                            class="hidden text-center py-4 bg-slate-100 rounded-xl text-slate-400 font-bold text-[11px]">⚠️
+                            Tidak Ada Foto</div>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-100 flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Pencatatan
+                            Pulang</span>
+                        <div class="space-y-1.5 text-xs font-semibold mb-3">
+                            <div class="flex justify-between"><span class="text-slate-400">Jam Pulang:</span><span
+                                    class="text-slate-800 font-bold" id="md-jam-pulang">00:00</span></div>
+                            <div class="flex justify-between"><span class="text-slate-400">Jarak Lokasi:</span><span
+                                    class="text-slate-800 font-bold" id="md-jarak-pulang">0 m</span></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 pt-2 border-t border-slate-200/60">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Bukti Foto
+                            Pulang</span>
+                        <a id="md-link-foto-pulang" href="#" target="_blank"
+                            class="block group relative overflow-hidden rounded-xl bg-slate-900 h-28 border border-slate-200">
+                            <img id="md-foto-pulang" src=""
+                                class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105 opacity-90"
+                                alt="Foto Pulang">
+                            <div
+                                class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-[10px] text-white font-bold transition-opacity">
+                                🔍 Buka Foto</div>
+                        </a>
+                        <div id="md-no-foto-pulang"
+                            class="hidden text-center py-4 bg-slate-100 rounded-xl text-slate-400 font-bold text-[11px]">⚠️
+                            Belum Absen Pulang</div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="p-3.5 bg-red-50/50 rounded-xl border border-red-100/60 mb-5 text-xs font-semibold flex justify-between items-center">
+                <div>
+                    <span class="text-slate-400 block text-[10px] font-bold uppercase tracking-wide">Ketentuan Ketetapan
+                        Shift</span>
+                    <span class="text-slate-800 font-black block mt-0.5" id="md-nama-shift">Shift Kerja</span>
+                </div>
+                <div>
+                    <span class="badge bg-red-600 text-white font-bold text-[11px] px-2.5 py-2 border-none rounded-lg"
+                        id="md-jam-shift">00:00 - 00:00</span>
+                </div>
+            </div>
+
+            <div id="md-box-izin" class="hidden p-4 bg-amber-50/60 border border-amber-200/60 rounded-xl mb-5 text-xs">
+                <span class="text-amber-800 font-bold uppercase text-[10px] tracking-wider block mb-1">Keterangan Dokumen
+                    Surat Izin</span>
+                <p class="text-slate-600 font-medium mb-3" id="md-keterangan-izin">Alasan...</p>
+                <a href="#" id="md-link-file-izin" target="_blank"
+                    class="btn btn-outline btn-warning btn-xs rounded-lg font-bold w-full normal-case">
+                    📂 Buka Gambar Berkas Pendukung di Tab Baru
+                </a>
+            </div>
+
+            <div class="modal-action mt-2">
+                <button type="button" onclick="modal_detail_presensi.close()"
+                    class="btn bg-slate-800 hover:bg-slate-900 border-none text-white font-bold text-xs px-6 rounded-xl normal-case">
+                    Tutup Jendela Detail
+                </button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop bg-slate-900/40"><button>close</button></form>
     </dialog>
 
     <!-- ========================================== -->
@@ -404,6 +516,63 @@
         });
 
         // 2. Fungsi Pengisi Data Masuk-Pulang ke Modal Dinamis
+        // function bukaDetailPresensi(presence, employee, shift) {
+        //     document.getElementById('md-avatar').textContent = employee.nama.substring(0, 2).toUpperCase();
+        //     document.getElementById('md-nama').textContent = employee.nama;
+        //     document.getElementById('md-jabatan').textContent = employee.jabatan;
+        //     document.getElementById('md-email').textContent = employee.email;
+
+        //     document.getElementById('md-nama-shift').textContent = shift.nama_shift;
+        //     document.getElementById('md-jam-shift').textContent =
+        //         `${shift.jam_masuk.substring(0, 5)} - ${shift.jam_pulang.substring(0, 5)}`;
+
+        //     document.getElementById('md-jam-masuk').textContent = presence.jam_masuk_asli ? presence.jam_masuk_asli
+        //         .substring(0, 5) : '--:--';
+        //     document.getElementById('md-jam-pulang').textContent = presence.jam_pulang_asli ? presence.jam_pulang_asli
+        //         .substring(0, 5) : 'Belum Pulang';
+
+        //     document.getElementById('md-jarak-masuk').textContent = presence.jarak_masuk_meter !== null ?
+        //         `${Math.round(presence.jarak_masuk_meter)} meter` : '-';
+        //     document.getElementById('md-jarak-pulang').textContent = presence.jarak_pulang_meter !== null ?
+        //         `${Math.round(presence.jarak_pulang_meter)} meter` : '-';
+
+        //     // Styling Badge Status di Dalam Modal
+        //     const badgeElement = document.getElementById('md-status-badge');
+        //     if (presence.status === 'Tepat Waktu') {
+        //         badgeElement.className =
+        //             "badge bg-emerald-100 text-emerald-700 border-none font-bold text-[10px] rounded-md";
+        //         badgeElement.textContent = "TEPAT WAKTU";
+        //     } else if (presence.status === 'Terlambat') {
+        //         badgeElement.className = "badge bg-red-100 text-red-600 border-none font-bold text-[10px] rounded-md";
+        //         badgeElement.textContent = "TERLAMBAT";
+        //     } else if (presence.status === 'Izin') {
+        //         badgeElement.className = "badge bg-amber-100 text-amber-700 border-none font-bold text-[10px] rounded-md";
+        //         badgeElement.textContent = "IZIN / SAKIT";
+        //     } else {
+        //         badgeElement.className = "badge bg-slate-100 text-slate-600 border-none font-bold text-[10px] rounded-md";
+        //         badgeElement.textContent = "ALPA";
+        //     }
+
+        //     // Handle Penampilan Lampiran Khusus Izin
+        //     const boxIzin = document.getElementById('md-box-izin');
+        //     if (presence.status === 'Izin') {
+        //         boxIzin.classList.remove('hidden');
+        //         document.getElementById('md-keterangan-izin').textContent = presence.keterangan ||
+        //             'Tidak ada keterangan tertulis.';
+
+        //         if (presence.file_izin) {
+        //             document.getElementById('md-link-file-izin').classList.remove('hidden');
+        //             document.getElementById('md-link-file-izin').href = `/File/${presence.file_izin}`;
+        //         } else {
+        //             document.getElementById('md-link-file-izin').classList.add('hidden');
+        //         }
+        //     } else {
+        //         boxIzin.classList.add('hidden');
+        //     }
+
+        //     modal_detail_presensi.showModal();
+        // }
+
         function bukaDetailPresensi(presence, employee, shift) {
             document.getElementById('md-avatar').textContent = employee.nama.substring(0, 2).toUpperCase();
             document.getElementById('md-nama').textContent = employee.nama;
@@ -440,6 +609,43 @@
                 badgeElement.className = "badge bg-slate-100 text-slate-600 border-none font-bold text-[10px] rounded-md";
                 badgeElement.textContent = "ALPA";
             }
+
+            // ========================================================
+            // LOGIKA PENAMPILAN FOTO SWAFOTO MASUK & PULANG (BARU)    
+            // ========================================================
+            const baseAbsenUrl = "/uploads/absensi";
+
+            // 1. Kondisi Validasi Foto Masuk
+            if (presence.foto_masuk) {
+                document.getElementById('md-foto-masuk').src = `${baseAbsenUrl}/${presence.foto_masuk}`;
+                document.getElementById('md-link-foto-masuk').href = `${baseAbsenUrl}/${presence.foto_masuk}`;
+
+                document.getElementById('md-link-foto-masuk').classList.remove('hidden');
+                document.getElementById('md-no-foto-masuk').classList.add('hidden');
+            } else {
+                document.getElementById('md-link-foto-masuk').classList.add('hidden');
+                document.getElementById('md-no-foto-masuk').classList.remove('hidden');
+            }
+
+            // 2. Kondisi Validasi Foto Pulang
+            if (presence.foto_pulang) {
+                document.getElementById('md-foto-pulang').src = `${baseAbsenUrl}/${presence.foto_pulang}`;
+                document.getElementById('md-link-foto-pulang').href = `${baseAbsenUrl}/${presence.foto_pulang}`;
+
+                document.getElementById('md-link-foto-pulang').classList.remove('hidden');
+                document.getElementById('md-no-foto-pulang').classList.add('hidden');
+            } else {
+                document.getElementById('md-link-foto-pulang').classList.add('hidden');
+                document.getElementById('md-no-foto-pulang').classList.remove('hidden');
+
+                // Kustomisasi teks fallback jika statusnya Izin/Alpa agar tidak ambigu
+                if (presence.status === 'Izin' || presence.status === 'Alpa') {
+                    document.getElementById('md-no-foto-pulang').textContent = "⚠️ Tanpa Absen Pulang";
+                } else {
+                    document.getElementById('md-no-foto-pulang').textContent = "⚠️ Belum Absen Pulang";
+                }
+            }
+            // ========================================================
 
             // Handle Penampilan Lampiran Khusus Izin
             const boxIzin = document.getElementById('md-box-izin');

@@ -104,6 +104,7 @@ class PresenceController extends Controller
     }
 
     public function dashboard() {
+
         $hariIni = Carbon::today('Asia/Jakarta')->toDateString();
 
         // 1. HITUNG STATISTIK HARI INI

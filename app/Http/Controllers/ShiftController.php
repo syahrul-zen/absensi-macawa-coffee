@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shift;
+use App\Models\Cordiant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,6 +16,7 @@ class ShiftController extends Controller
     {
         return view('Admin.Shift.index', [
             'shifts' => Shift::latest()->get(),
+            'koordinat' => Cordiant::first()
         ]);
     }
 
