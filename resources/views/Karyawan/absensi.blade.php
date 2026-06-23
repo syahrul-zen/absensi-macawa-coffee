@@ -373,36 +373,121 @@
         updateClock();
 
         // 2. Ambil Geolocation Browser saat tombol Masuk ditekan
+        // function getLokasiKaryawan() {
+        //     if (navigator.geolocation) {
+        //         navigator.geolocation.getCurrentPosition(function(position) {
+        //             // Set nilai koordinat ke hidden input form
+        //             document.getElementById('input-lat').value = position.coords.latitude;
+        //             document.getElementById('input-lon').value = position.coords.longitude;
+
+        //             // Kirim form secara otomatis ke backend setelah data koordinat terisi
+        //             document.getElementById('form-absen-masuk').submit();
+        //         }, function(error) {
+        //             alert("Gagal mengambil lokasi. Pastikan izin lokasi/GPS pada browser Anda aktif.");
+        //         });
+        //     } else {
+        //         alert("Browser Anda tidak mendukung fitur pelacakan GPS.");
+        //     }
+        // }
+
+        // // 2. FUNGSI BARU: Ambil Lokasi untuk PULANG
+        // function getLokasiPulang() {
+        //     if (navigator.geolocation) {
+        //         navigator.geolocation.getCurrentPosition(function(position) {
+        //             // Masukkan data ke input hidden milik form pulang
+        //             document.getElementById('input-lat-pulang').value = position.coords.latitude;
+        //             document.getElementById('input-lon-pulang').value = position.coords.longitude;
+
+        //             // Submit form pulang
+        //             document.getElementById('form-absen-pulang').submit();
+        //         }, function(error) {
+        //             alert("Gagal mengambil lokasi pulang. Pastikan izin lokasi/GPS aktif saat pulang kerja.");
+        //         });
+        //     } else {
+        //         alert("Browser Anda tidak mendukung fitur pelacakan GPS.");
+        //     }
+        // }
+
+        // ============================ BARU ==========================================
+        // 🌟 KONFIGURASI SAKTI UNTUK AKURASI GPS MAKSIMAL
+        const opsiGeolokasiMaksimal = {
+            enableHighAccuracy: true, // Memaksa browser menggunakan hardware GPS Satelit (Akurasi Tinggi)
+            timeout: 10000, // Batas waktu tunggu pencarian posisi maksimal 10 detik
+            maximumAge: 0 // Memaksa sistem selalu mengambil posisi realtime terbaru, anti-cache data lama
+        };
+
+        // 1. FUNGSI OPTIMAL: Ambil Lokasi untuk MASUK
         function getLokasiKaryawan() {
             if (navigator.geolocation) {
+                // Tampilkan loading teks ringan pada tombol agar karyawan tahu proses sedang berjalan
+                const btnMasuk = document.querySelector("#form-absen-masuk button");
+                if (btnMasuk) {
+                    btnMasuk.disabled = true;
+                    btnMasuk.innerHTML = "⏳ Menghubungi Satelit GPS...";
+                }
+
                 navigator.geolocation.getCurrentPosition(function(position) {
-                    // Set nilai koordinat ke hidden input form
+                    // Set nilai koordinat hasil akurasi tinggi ke hidden input form masuk
                     document.getElementById('input-lat').value = position.coords.latitude;
                     document.getElementById('input-lon').value = position.coords.longitude;
 
                     // Kirim form secara otomatis ke backend setelah data koordinat terisi
                     document.getElementById('form-absen-masuk').submit();
                 }, function(error) {
-                    alert("Gagal mengambil lokasi. Pastikan izin lokasi/GPS pada browser Anda aktif.");
-                });
+                    // Kembalikan tombol ke semula jika gagal
+                    if (btnMasuk) {
+                        btnMasuk.disabled = false;
+                        btnMasuk.innerHTML = "✔ Kirim Absen Masuk (Verifikasi Lokasi)";
+                    }
+
+                    // Logika pesan error yang lebih informatif sesuai kode error HTML5
+                    if (error.code === error.TIMEOUT) {
+                        alert(
+                            "⚠️ Waktu tunggu habis. Koneksi GPS Anda lambat, silakan coba lagi di area yang lebih terbuka."
+                            );
+                    } else {
+                        alert("⚠️ Gagal mengambil lokasi. Pastikan izin lokasi/GPS pada browser Anda aktif.");
+                    }
+                }, opsiGeolokasiMaksimal); // <--- Menyematkan konfigurasi akurasi tinggi disini
             } else {
                 alert("Browser Anda tidak mendukung fitur pelacakan GPS.");
             }
         }
 
-        // 2. FUNGSI BARU: Ambil Lokasi untuk PULANG
+        // 2. FUNGSI OPTIMAL: Ambil Lokasi untuk PULANG
         function getLokasiPulang() {
             if (navigator.geolocation) {
+                // Tampilkan loading teks ringan pada tombol pulang
+                const btnPulang = document.querySelector("#form-absen-pulang button");
+                if (btnPulang) {
+                    btnPulang.disabled = true;
+                    btnPulang.innerHTML = "⏳ Menghubungi Satelit GPS...";
+                }
+
                 navigator.geolocation.getCurrentPosition(function(position) {
-                    // Masukkan data ke input hidden milik form pulang
+                    // Masukkan data hasil akurasi tinggi ke input hidden milik form pulang
                     document.getElementById('input-lat-pulang').value = position.coords.latitude;
                     document.getElementById('input-lon-pulang').value = position.coords.longitude;
 
                     // Submit form pulang
                     document.getElementById('form-absen-pulang').submit();
                 }, function(error) {
-                    alert("Gagal mengambil lokasi pulang. Pastikan izin lokasi/GPS aktif saat pulang kerja.");
-                });
+                    // Kembalikan tombol ke semula jika gagal
+                    if (btnPulang) {
+                        btnPulang.disabled = false;
+                        btnPulang.innerHTML = "👋 Catat Absen Pulang Kerja";
+                    }
+
+                    if (error.code === error.TIMEOUT) {
+                        alert(
+                            "⚠️ Waktu tunggu habis. Koneksi GPS Anda lambat, silakan coba lagi di area yang lebih terbuka."
+                            );
+                    } else {
+                        alert(
+                            "⚠️ Gagal mengambil lokasi pulang. Pastikan izin lokasi/GPS aktif saat pulang kerja."
+                            );
+                    }
+                }, opsiGeolokasiMaksimal); // <--- Menyematkan konfigurasi akurasi tinggi disini
             } else {
                 alert("Browser Anda tidak mendukung fitur pelacakan GPS.");
             }
