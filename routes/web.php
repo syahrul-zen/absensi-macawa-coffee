@@ -53,6 +53,8 @@ Route::post('/absen-masuk', [AbsensiController::class, 'absenMasuk'])->middlewar
 Route::post('/absen-pulang', [AbsensiController::class, 'absenPulang'])->middleware('isEmployee');
 Route::post('/absen-izin', [AbsensiController::class, 'absenIzin'])->middleware('isEmployee');
 Route::get('/riwayat-absensi', [EmployeeController::class, 'riwayat'])->middleware('isEmployee');
+Route::put('/ubah-shift-mandiri', [EmployeeController::class, 'ubahShiftMandiri']);
+
 
 // =====================================================================
 

@@ -444,7 +444,7 @@
                     if (error.code === error.TIMEOUT) {
                         alert(
                             "⚠️ Waktu tunggu habis. Koneksi GPS Anda lambat, silakan coba lagi di area yang lebih terbuka."
-                            );
+                        );
                     } else {
                         alert("⚠️ Gagal mengambil lokasi. Pastikan izin lokasi/GPS pada browser Anda aktif.");
                     }
@@ -481,11 +481,11 @@
                     if (error.code === error.TIMEOUT) {
                         alert(
                             "⚠️ Waktu tunggu habis. Koneksi GPS Anda lambat, silakan coba lagi di area yang lebih terbuka."
-                            );
+                        );
                     } else {
                         alert(
                             "⚠️ Gagal mengambil lokasi pulang. Pastikan izin lokasi/GPS aktif saat pulang kerja."
-                            );
+                        );
                     }
                 }, opsiGeolokasiMaksimal); // <--- Menyematkan konfigurasi akurasi tinggi disini
             } else {

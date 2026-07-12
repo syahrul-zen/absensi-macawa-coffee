@@ -137,12 +137,12 @@
                         <div class="avatar placeholder">
                             <div
                                 class="bg-red-600 text-white rounded-xl w-10 h-10 flex items-center justify-center text-xs font-black">
-                                {{ strtoupper(substr('Bambang Pamungkas' ?? 'K', 0, 2)) }}
+                                {{ strtoupper(substr(Auth::guard('employee')->user()->nama ?? 'K', 0, 2)) }}
                             </div>
                         </div>
                         <div class="truncate">
                             <h4 class="text-xs font-bold text-slate-800 truncate">
-                                {{ 'Bambang Pamungkas' ?? 'Nama Karyawan' }}</h4>
+                                {{ Auth::guard('employee')->user()->nama ?? 'Nama Karyawan' }}</h4>
                             <span
                                 class="text-[10px] font-semibold text-slate-400 block mt-0.5">{{ Auth::guard('employee')->user()->jabatan ?? 'Staf' }}</span>
                         </div>

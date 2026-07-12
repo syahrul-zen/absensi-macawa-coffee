@@ -244,6 +244,8 @@ class EmployeeController extends Controller
             ->orderBy('tanggal', 'desc')
             ->get();
 
+        $daftarShift = Shift::latest()->get();
+
         // 2. Hitung statistik untuk ringkasan sidebar (30%)
         $totalHadir = $riwayatAbsensi->whereIn('status', ['Tepat Waktu', 'Terlambat'])->count();
         $totalIzin  = $riwayatAbsensi->where('status', 'Izin')->count();
@@ -255,8 +257,48 @@ class EmployeeController extends Controller
             'totalIzin', 
             'totalAlpa', 
             'bulan',
-            'tahun'
+            'tahun',
+            'daftarShift'
         ));
+    }
+
+    public function ubahShiftMandiri(Request $request)
+    {
+        // 1. Validasi Input ID Shift
+        $validate = $request->validate([
+            'shift_id' => 'required|exists:shifts,id', // Pastikan nama tabel database Anda adalah 'shifts'
+        ], [
+            'shift_id.required' => 'Gagal! Anda wajib memilih salah satu shift yang tersedia.',
+            'shift_id.exists'   => 'Gagal! Pilihan shift kerja tidak valid atau tidak terdaftar.',
+        ]);
+
+        $karyawan = Auth::guard('employee')->user();
+        $hariIni = Carbon::today('Asia/Jakarta')->toDateString();
+
+        // 2. ATURAN BLOKIR GANDA: Cek apakah hari ini sudah melakukan absensi (Masuk/Izin)
+        $sudahAbsenHariIni = Presence::where('employee_id', $karyawan->id)
+            ->where('tanggal', $hariIni)
+            ->exists();
+
+        if ($sudahAbsenHariIni) {
+            return redirect()->back()->with('error', 'Perubahan Ditolak! Anda tidak diperbolehkan mengganti shift karena telah melakukan presensi atau mengajukan izin hari ini.');
+        }
+
+        // 3. Cek apakah shift yang dipilih sama dengan shift yang aktif sekarang
+        if ($karyawan->shift_id == $validate['shift_id']) {
+            return redirect()->back()->with('error', 'Jadwal shift yang Anda pilih masih sama dengan shift aktif saat ini.');
+        }
+
+        // 4. Eksekusi Perubahan Data ke Tabel Karyawan (Employees)
+        // Menggunakan query langsung ke model User Karyawan yang sedang login
+        $karyawan->update([
+            'shift_id' => $validate['shift_id']
+        ]);
+
+        // Ambil nama shift baru untuk kebutuhan teks notifikasi sukses
+        $shiftBaru = Shift::find($validate['shift_id']);
+
+        return redirect()->back()->with('success', 'Jadwal kerja berhasil diperbarui! Shift aktif Anda sekarang: ' . $shiftBaru->nama_shift . ' 💾');
     }
     
 }
