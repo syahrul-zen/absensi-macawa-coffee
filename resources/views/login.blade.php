@@ -17,22 +17,28 @@
         class="w-full max-w-4xl bg-slate-55 rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.04)] border border-slate-200/60 overflow-hidden grid grid-cols-1 md:grid-cols-2 min-h-[580px]">
 
         <!-- SISI KIRI: VISUAL BANNER COFFEE THEME (Tersembunyi di HP) -->
-        <div
-            class="hidden md:flex flex-col justify-between p-10 bg-gradient-to-br from-amber-950 to-slate-950 text-white relative overflow-hidden">
-            <!-- Pola Dekoratif Halus -->
+        <!-- 🌟 PERBAIKAN: Menggunakan background image dengan penutup overlay gelap agar tidak silau -->
+        <div class="hidden md:flex flex-col justify-between p-10 text-white relative overflow-hidden bg-cover bg-center"
+            style="background-image: url('{{ asset('Img/bg-login.jpeg') }}');">
+
+            <!-- 🌟 OVERLAY GELAP: Lapisan pelindung mata agar gambar latar tidak silau dan teks tetap kontras -->
+            <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-amber-950/70 to-slate-950/90 z-0"></div>
+
+            <!-- Pola Dekoratif Halus (Tetap dipertahankan di atas overlay) -->
             <div
-                class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]">
+                class="absolute inset-0 opacity-5 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] z-0">
             </div>
 
-            <!-- 🌟 LOGO KIRI: Diberi Kotak Putih Solid agar Logo Hitam PNG Anda Menyala Kontras -->
+            <!-- LOGO KIRI: Berada di atas lapisan overlay (z-10) -->
             <div class="flex flex-col items-start gap-4 relative z-10">
+                <!-- Kotak putih solid pembungkus logo hitam PNG Anda -->
                 <div
                     class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center border border-slate-200 p-2.5 shadow-md">
                     <img src="{{ asset('Img/logo_macawa.png') }}" alt="Logo Macawa Coffee"
                         class="w-full h-full object-contain">
                 </div>
                 <div class="space-y-0.5">
-                    <span class="text-[10px] font-black tracking-widest uppercase text-amber-400/90 block">Workspace
+                    <span class="text-[10px] font-black tracking-widest uppercase text-amber-450 block">Workspace
                         System</span>
                     <span class="text-sm font-extrabold tracking-tight opacity-90 block">Macawa Coffee</span>
                 </div>
@@ -42,14 +48,14 @@
             <div class="space-y-3.5 relative z-10 my-auto">
                 <h1 class="text-3xl font-black leading-tight tracking-tight text-white">Seduh Semangat,<br>Catat
                     Kehadiran.</h1>
-                <p class="text-xs text-amber-200/70 font-medium leading-relaxed max-w-sm">
+                <p class="text-xs text-amber-100/80 font-medium leading-relaxed max-w-sm">
                     Silakan masuk untuk mengelola shift, meninjau jurnal presensi harian, dan memantau performa kedai
                     Anda.
                 </p>
             </div>
 
             <!-- Footer Bawah -->
-            <div class="text-[10px] font-semibold text-white/40 relative z-10">
+            <div class="text-[10px] font-semibold text-white/50 relative z-10">
                 &copy; {{ date('Y') }} Macawa Coffee. All Rights Reserved.
             </div>
         </div>
