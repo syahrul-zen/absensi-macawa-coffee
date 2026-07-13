@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="bg-slate-50">
+<html lang="id" class="bg-slate-100/70">
 
 <head>
     <meta charset="UTF-8">
@@ -10,31 +10,38 @@
 </head>
 
 <body
-    class="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 selection:bg-red-100 selection:text-macawa-red">
+    class="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 selection:bg-red-100 selection:text-macawa-red bg-slate-100/70">
 
     <!-- CONTAINER UTAMA SPLIT SCREEN -->
     <div
-        class="w-full max-w-4xl bg-white rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden grid grid-cols-1 md:grid-cols-2 min-h-[550px]">
+        class="w-full max-w-4xl bg-slate-55 rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.04)] border border-slate-200/60 overflow-hidden grid grid-cols-1 md:grid-cols-2 min-h-[580px]">
 
         <!-- SISI KIRI: VISUAL BANNER COFFEE THEME (Tersembunyi di HP) -->
         <div
-            class="hidden md:flex flex-col justify-between p-8 bg-gradient-to-br from-amber-950 to-slate-950 text-white relative overflow-hidden">
+            class="hidden md:flex flex-col justify-between p-10 bg-gradient-to-br from-amber-950 to-slate-950 text-white relative overflow-hidden">
             <!-- Pola Dekoratif Halus -->
             <div
                 class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]">
             </div>
 
-            <!-- Logo atas -->
-            <div class="flex items-center gap-2 relative z-10">
+            <!-- 🌟 LOGO KIRI: Diberi Kotak Putih Solid agar Logo Hitam PNG Anda Menyala Kontras -->
+            <div class="flex flex-col items-start gap-4 relative z-10">
                 <div
-                    class="w-7 h-7 rounded-lg bg-white/10 backdrop-blur-md flex items-center justify-center text-xs font-black border border-white/20">
-                    M</div>
-                <span class="text-xs font-bold tracking-wider uppercase opacity-80">Macawa Coffee Workspace</span>
+                    class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center border border-slate-200 p-2.5 shadow-md">
+                    <img src="{{ asset('Img/logo_macawa.png') }}" alt="Logo Macawa Coffee"
+                        class="w-full h-full object-contain">
+                </div>
+                <div class="space-y-0.5">
+                    <span class="text-[10px] font-black tracking-widest uppercase text-amber-400/90 block">Workspace
+                        System</span>
+                    <span class="text-sm font-extrabold tracking-tight opacity-90 block">Macawa Coffee</span>
+                </div>
             </div>
 
             <!-- Kutipan Tengah -->
-            <div class="space-y-3 relative z-10 my-auto">
-                <h1 class="text-2xl font-black leading-tight tracking-tight">Seduh Semangat, Catat Kehadiran.</h1>
+            <div class="space-y-3.5 relative z-10 my-auto">
+                <h1 class="text-3xl font-black leading-tight tracking-tight text-white">Seduh Semangat,<br>Catat
+                    Kehadiran.</h1>
                 <p class="text-xs text-amber-200/70 font-medium leading-relaxed max-w-sm">
                     Silakan masuk untuk mengelola shift, meninjau jurnal presensi harian, dan memantau performa kedai
                     Anda.
@@ -47,15 +54,20 @@
             </div>
         </div>
 
-        <!-- SISI KANAN: FORM INTERAKTIF AUTH -->
-        <div class="flex flex-col justify-center p-6 sm:p-10 bg-white">
+        <!-- SISI KANAN: FORM INTERAKTIF AUTH (SOFT OFF-WHITE - TIDAK SILAU) -->
+        <div class="flex flex-col justify-center p-6 sm:p-10 bg-slate-55">
 
             <!-- Header Form -->
-            <div class="mb-6 text-center md:text-left">
+            <div class="mb-8 text-center lg:text-left flex flex-col items-center lg:items-start">
+
+                <!-- 🌟 LOGO KANAN (RESPONSIF): Background Putih Bersih Menampilkan Logo Hitam PNG Dengan Jelas -->
                 <div
-                    class="md:hidden inline-flex w-10 h-10 rounded-xl bg-red-50 text-macawa-red items-center justify-center text-sm font-black mb-3">
-                    M</div>
-                <h2 class="text-xl font-black text-slate-900 tracking-tight">Selamat Datang Kembali</h2>
+                    class="lg:hidden inline-flex w-20 h-20 rounded-2xl bg-white border border-slate-200/80 items-center justify-center p-3.5 mb-5 shadow-sm">
+                    <img src="{{ asset('Img/logo_macawa.png') }}" alt="Logo Macawa Coffee"
+                        class="w-full h-full object-contain">
+                </div>
+
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">Selamat Datang Kembali</h2>
                 <p class="text-xs font-semibold text-slate-400 mt-1">Masukkan email kerja Anda untuk mengakses
                     dashboard.</p>
             </div>
@@ -75,7 +87,7 @@
                         <span class="absolute left-3.5 text-slate-400 text-xs">✉️</span>
                         <input type="email" name="email" required value="{{ old('email') }}"
                             placeholder="nama@macawacoffee.com"
-                            class="input input-bordered bg-white text-slate-700 pl-9 rounded-xl font-semibold text-xs @error('email') border-red-500 @else border-slate-200 @enderror focus:outline-none focus:border-slate-900 w-full h-10.5 shadow-sm transition-all" />
+                            class="input input-bordered bg-white text-slate-700 pl-9 rounded-xl font-semibold text-xs @error('email') border-red-500 @else border-slate-200 focus:border-slate-900 @enderror focus:outline-none w-full h-11 shadow-sm transition-all" />
                     </div>
 
                     @error('email')
@@ -96,35 +108,26 @@
                     <div class="relative flex items-center">
                         <span class="absolute left-3.5 text-slate-400 text-xs">🔒</span>
                         <input type="password" name="password" required placeholder="••••••••"
-                            class="input input-bordered bg-white text-slate-700 pl-9 rounded-xl font-semibold text-xs @error('email') border-red-500 @else border-slate-200 @enderror focus:outline-none focus:border-slate-900 w-full h-10.5 shadow-sm transition-all" />
+                            class="input input-bordered bg-white text-slate-700 pl-9 rounded-xl font-semibold text-xs border-slate-200 focus:border-slate-900 w-full h-11 shadow-sm transition-all" />
                     </div>
                 </div>
-
-                <!-- REMEMBER ME -->
-                {{-- <div class="flex items-center justify-between pt-0.5">
-                    <label class="label cursor-pointer justify-start gap-2 p-0">
-                        <input type="checkbox" name="remember"
-                            class="checkbox checkbox-xs rounded-md bg-white border-slate-300 checked:bg-slate-900 checked:text-white" />
-                        <span class="label-text text-[11px] font-bold text-slate-500">Ingat Akun Saya</span>
-                    </label>
-                </div> --}}
 
                 <!-- TOMBOL MASUK UTAMA -->
                 <div class="pt-2">
                     <button type="submit"
-                        class="btn w-full bg-macawa-red hover:bg-red-700 border-none text-white font-black text-xs h-10.5 rounded-xl normal-case shadow-md shadow-red-100 transition-all duration-200">
+                        class="btn w-full bg-macawa-red hover:bg-red-700 border-none text-white font-black text-xs h-11 rounded-xl normal-case shadow-md shadow-red-100 transition-all duration-200">
                         Masuk Workspace ☕
                     </button>
                 </div>
             </form>
 
             <!-- Teks Bantuan Khusus Karyawan -->
-            <div class="mt-8 pt-4 border-t border-slate-50 text-center">
+            {{-- <div class="mt-8 pt-4 border-t border-slate-200/60 text-center">
                 <p class="text-[10px] font-medium text-slate-400 leading-relaxed">
-                    Kendala hak akses atau lupa kata sandi? <br>Silakan hubungi **Manager / Admin IT Macawa Coffee**
-                    untuk reset data.
+                    Kendala hak akses atau lupa kata sandi? <br>Silakan hubungi <span
+                        class="text-slate-700 font-bold">Manager / Admin IT Macawa Coffee</span> untuk reset data.
                 </p>
-            </div>
+            </div> --}}
 
         </div>
     </div>
