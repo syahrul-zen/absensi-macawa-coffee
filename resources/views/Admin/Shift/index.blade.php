@@ -20,21 +20,22 @@
             </div>
         @endif
 
-        {{-- Header Section --}}
-        <div class="flex items-center justify-between">
+        {{-- 🌟 HEADER SECTION: Diubah menjadi flex-col pada HP, md:flex-row pada Desktop --}}
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0">
             <div>
                 <h2 class="text-xl font-bold tracking-tight text-slate-900">Pengaturan Jam Kerja</h2>
                 <p class="mt-0.5 text-xs font-medium text-slate-400">Kelola batasan waktu kerja operasional café.</p>
             </div>
 
-            <div class="flex items-center gap-2">
+            {{-- Tombol Aksi: w-full pada HP agar mudah ditekan, w-auto pada Desktop --}}
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <button type="button" onclick="modal_edit_koordinat.showModal()"
-                    class="btn btn-sm bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold normal-case h-9 shadow-sm">
+                    class="btn btn-sm bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold normal-case h-9 shadow-sm w-full sm:w-auto">
                     📍 Edit Koordinat Kafe
                 </button>
 
                 <label for="modal-add-shift"
-                    class="btn bg-macawa-red rounded-xl border-none text-xs font-bold normal-case text-white hover:bg-red-700 h-9 min-h-0">
+                    class="btn btn-sm bg-macawa-red rounded-xl border-none text-xs font-bold normal-case text-white hover:bg-red-700 h-9 min-h-0 w-full sm:w-auto flex items-center justify-center">
                     + Tambah Shift Kerja
                 </label>
             </div>
@@ -102,59 +103,104 @@
                 <button>close</button>
             </form>
         </dialog>
-
-
-
     </div>
-    <!-- Table Container -->
-    <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-        <div class="overflow-x-auto">
-            <table class="table w-full text-slate-700">
-                <thead
-                    class="border-b border-slate-100 bg-slate-50/70 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    <tr>
-                        <th class="px-6 py-4">Nama Shift</th>
-                        <th class="px-6 py-4">Jam Masuk</th>
-                        <th class="px-6 py-4">Jam Pulang</th>
-                        <th class="px-6 py-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-50">
-                    @forelse($shifts as $shift)
+
+    {{-- 🌟 LIST DATA SHIFT WORKSPACE: Tampilan Responsif (Card pada HP, Tabel pada Desktop) --}}
+    <div class="mt-4">
+        {{-- 1. TAMPILAN MOBILE: Sistem Grid Card (Hanya Terlihat di Layar di Bawah 'md') --}}
+        <div class="grid grid-cols-1 gap-3 md:hidden">
+            @forelse($shifts as $shift)
+                <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-3">
+                    <div class="flex items-center justify-between border-b border-dashed border-slate-100 pb-2">
+                        <span class="text-xs font-black text-slate-900 uppercase tracking-wider">💼
+                            {{ $shift->nama_shift }}</span>
+                        <div class="flex items-center gap-1">
+                            <button type="button"
+                                class="btn-edit-shift btn btn-ghost btn-xs font-black text-yellow-500 normal-case"
+                                data-id="{{ $shift->id }}" data-nama="{{ $shift->nama_shift }}"
+                                data-masuk="{{ \Carbon\Carbon::parse($shift->jam_masuk)->format('H:i') }}"
+                                data-pulang="{{ \Carbon\Carbon::parse($shift->jam_pulang)->format('H:i') }}">
+                                Edit
+                            </button>
+                            <span class="text-slate-200 text-xs">|</span>
+                            <button type="button"
+                                class="btn-delete-shift btn btn-ghost btn-xs text-macawa-red font-black normal-case"
+                                data-id="{{ $shift->id }}" data-nama="{{ $shift->nama_shift }}">
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        class="grid grid-cols-2 gap-2 text-center bg-slate-50/50 p-2 rounded-xl border border-slate-100/50">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Jam Masuk</span>
+                            <span class="text-xs font-extrabold text-slate-700 mt-0.5">⏱️
+                                {{ \Carbon\Carbon::parse($shift->jam_masuk)->format('H:i') }}</span>
+                        </div>
+                        <div class="flex flex-col border-l border-slate-200/60">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Jam Pulang</span>
+                            <span class="text-xs font-extrabold text-slate-700 mt-0.5">🚪
+                                {{ \Carbon\Carbon::parse($shift->jam_pulang)->format('H:i') }}</span>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div
+                    class="bg-white border border-slate-100 rounded-2xl p-8 text-center text-xs font-medium text-slate-400 shadow-sm">
+                    Belum ada data shift kerja. Tambahkan shift baru untuk memulai.
+                </div>
+            @endforelse
+        </div>
+
+        {{-- 2. TAMPILAN DESKTOP: Tabel Tradisional (Disembunyikan pada HP, Muncul Mulai Ukuran 'md') --}}
+        <div class="hidden md:block overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="table w-full text-slate-700">
+                    <thead
+                        class="border-b border-slate-100 bg-slate-50/70 text-[11px] font-bold uppercase tracking-wider text-slate-400">
                         <tr>
-                            <td class="px-6 py-4 font-semibold text-slate-900">{{ $shift->nama_shift }}</td>
-                            <td class="px-6 py-4 text-xs font-medium">
-                                {{ \Carbon\Carbon::parse($shift->jam_masuk)->format('H:i') }}</td>
-                            <td class="px-6 py-4 text-xs font-medium">
-                                {{ \Carbon\Carbon::parse($shift->jam_pulang)->format('H:i') }}</td>
-                            <td class="px-6 py-4 text-center">
-                                <!-- Tombol Edit dengan data attribute -->
-                                <button type="button"
-                                    class="btn-edit-shift btn btn-ghost btn-xs font-bold normal-case text-yellow-500"
-                                    data-id="{{ $shift->id }}" data-nama="{{ $shift->nama_shift }}"
-                                    data-masuk="{{ \Carbon\Carbon::parse($shift->jam_masuk)->format('H:i') }}"
-                                    data-pulang="{{ \Carbon\Carbon::parse($shift->jam_pulang)->format('H:i') }}">
-                                    Edit
-                                </button>
-                                <button type="button"
-                                    class="btn-delete-shift btn btn-ghost btn-xs text-macawa-red font-bold normal-case"
-                                    data-id="{{ $shift->id }}" data-nama="{{ $shift->nama_shift }}">
-                                    Hapus
-                                </button>
-                            </td>
+                            <th class="px-6 py-4">Nama Shift</th>
+                            <th class="px-6 py-4">Jam Masuk</th>
+                            <th class="px-6 py-4">Jam Pulang</th>
+                            <th class="px-6 py-4 text-center">Aksi</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="py-12 text-center text-xs font-medium text-slate-400">
-                                Belum ada data shift kerja. Tambahkan shift baru untuk memulai.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        @forelse($shifts as $shift)
+                            <tr>
+                                <td class="px-6 py-4 font-semibold text-slate-900">{{ $shift->nama_shift }}</td>
+                                <td class="px-6 py-4 text-xs font-medium">
+                                    {{ \Carbon\Carbon::parse($shift->jam_masuk)->format('H:i') }}</td>
+                                <td class="px-6 py-4 text-xs font-medium">
+                                    {{ \Carbon\Carbon::parse($shift->jam_pulang)->format('H:i') }}</td>
+                                <td class="px-6 py-4 text-center">
+                                    <button type="button"
+                                        class="btn-edit-shift btn btn-ghost btn-xs font-bold normal-case text-yellow-500"
+                                        data-id="{{ $shift->id }}" data-nama="{{ $shift->nama_shift }}"
+                                        data-masuk="{{ \Carbon\Carbon::parse($shift->jam_masuk)->format('H:i') }}"
+                                        data-pulang="{{ \Carbon\Carbon::parse($shift->jam_pulang)->format('H:i') }}">
+                                        Edit
+                                    </button>
+                                    <button type="button"
+                                        class="btn-delete-shift btn btn-ghost btn-xs text-macawa-red font-bold normal-case"
+                                        data-id="{{ $shift->id }}" data-nama="{{ $shift->nama_shift }}">
+                                        Hapus
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="py-12 text-center text-xs font-medium text-slate-400">
+                                    Belum ada data shift kerja. Tambahkan shift baru untuk memulai.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-
     <!-- DaisyUI Modal Component Layout -->
     <!-- Jika ada error di validasi form, otomatis tambahkan atribut 'checked' agar modal langsung timbul -->
     <input type="checkbox" id="modal-add-shift" class="modal-toggle" {{ $errors->any() ? 'checked' : '' }} />
