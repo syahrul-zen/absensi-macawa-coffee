@@ -177,7 +177,7 @@
                     </div>
                 @endif
 
-                <div class="flex flex-col gap-3">
+                {{-- <div class="flex flex-col gap-3">
                     @if (!$absensiHariIni)
                         <form action="{{ url('/absen-masuk') }}" method="POST" id="form-absen-masuk">
                             @csrf
@@ -206,6 +206,47 @@
                             <button type="button" onclick="validateAndSubmitPulang()"
                                 class="btn bg-slate-800 hover:bg-slate-900 border-none text-white w-full rounded-xl font-bold text-xs h-12 normal-case">
                                 👋 Catat Absen Pulang Kerja
+                            </button>
+                        </form>
+                    @else
+                        <div
+                            class="p-4 bg-emerald-50 border border-emerald-100 text-emerald-800 font-bold text-xs rounded-xl text-center">
+                            🎉 Absensi hari ini selesai. Selamat beristirahat dari tugas shift Anda!
+                        </div>
+                    @endif
+                </div> --}}
+
+                <div class="flex flex-col gap-3">
+                    @if (!$absensiHariIni)
+                        <form action="{{ url('/absen-masuk') }}" method="POST" id="form-absen-masuk">
+                            @csrf
+                            <input type="hidden" name="latitude" id="input-lat">
+                            <input type="hidden" name="longitude" id="input-lon">
+                            <input type="hidden" name="image_data" id="image_data">
+
+                            <button type="button" onclick="validateAndSubmitMasuk()"
+                                {{ !$isDalamJamShift ? 'disabled' : '' }}
+                                class="btn bg-red-600 hover:bg-red-700 border-none text-white w-full rounded-xl font-bold text-xs h-12 normal-case disabled:bg-slate-100 disabled:text-slate-400">
+                                {{ $isDalamJamShift ? '✔ Kirim Absen Masuk (Verifikasi Lokasi)' : '🔒 Tombol Terkunci (Di Luar Jam Shift)' }}
+                            </button>
+                        </form>
+
+                        <button type="button" onclick="modal_izin_karyawan.showModal()"
+                            class="text-xs text-red-500 font-bold underline cursor-pointer mt-2 text-center hover:text-red-700 block mx-auto bg-transparent border-none">
+                            Ajukan Surat Izin / Sakit Jika Berhalangan Hadir
+                        </button>
+                    @elseif($absensiHariIni && is_null($absensiHariIni->jam_pulang_asli))
+                        {{-- BAGIAN ABSEN PULANG DENGAN RESTRIKSI 15 MENIT --}}
+                        <form action="{{ url('/absen-pulang') }}" method="POST" id="form-absen-pulang">
+                            @csrf
+                            <input type="hidden" name="latitude_pulang" id="input-lat-pulang">
+                            <input type="hidden" name="longitude_pulang" id="input-lon-pulang">
+                            <input type="hidden" name="image_data" id="image_data_pulang">
+
+                            <button type="button" onclick="validateAndSubmitPulang()"
+                                {{ !$isBolehPulang ? 'disabled' : '' }}
+                                class="btn bg-slate-800 hover:bg-slate-900 border-none text-white w-full rounded-xl font-bold text-xs h-12 normal-case disabled:bg-slate-100 disabled:text-slate-400">
+                                {{ $isBolehPulang ? '👋 Catat Absen Pulang Kerja' : '🔒 Belum Waktunya Pulang (Min. 15 Menit Sebelum Shift Selesai)' }}
                             </button>
                         </form>
                     @else

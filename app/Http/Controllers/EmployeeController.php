@@ -145,47 +145,97 @@ class EmployeeController extends Controller
         return back()->with('success', 'Data Karyawan '.$nama.' berhasil dihapus');
     }
 
+    // public function home() {
+
+    //     $karyawan = Auth::guard('employee')->user();
+    //     $shift = $karyawan->shift;
+
+    //     // return $shift;
+    
+    //     // Mengunci pencatatan ke zona waktu lokal Indonesia Barat (WIB)
+    //     $hariIni = Carbon::today('Asia/Jakarta')->toDateString();
+    //     $jamSekarang = Carbon::now('Asia/Jakarta')->toTimeString();
+
+    //     // Cari data absensi karyawan hari ini
+    //     $absensiHariIni = Presence::where('employee_id', $karyawan->id)
+    //         ->where('tanggal', $hariIni)
+    //         ->first();
+
+    //     // Cek Apakah berada di dalam rentang waktu shift
+    //     // Karyawan hanya bisa absen dari jam_masuk shift sampai jam_pulang shift
+    //     // $isDalamJamShift = ($jamSekarang >= $shift->jam_masuk && $jamSekarang <= $shift->jam_pulang);
+
+    //     // return $isDalamJamShift;
+
+    //     $jamSekarang = Carbon::now('Asia/Jakarta')->toTimeString(); // "23:46:00"
+
+    //     // Cek apakah shift ini melewati tengah malam (Contoh: 23:41 > 00:42)
+    //     if ($shift->jam_masuk > $shift->jam_pulang) {
+    //         // Logika untuk Shift Malam (Melewati Tengah Malam)
+    //         $isDalamJamShift = ($jamSekarang >= $shift->jam_masuk || $jamSekarang <= $shift->jam_pulang);
+    //     } else {
+    //         // Logika untuk Shift Normal (Pagi/Siang di hari yang sama)
+    //         $isDalamJamShift = ($jamSekarang >= $shift->jam_masuk && $jamSekarang <= $shift->jam_pulang);
+    //     }
+
+    //     return view('Karyawan.absensi', [
+    //         'karyawan' => $karyawan->load('shift'), 
+    //         'shift' => $shift, 
+    //         'absensiHariIni' => $absensiHariIni, 
+    //         'isDalamJamShift' => $isDalamJamShift
+    //     ]);
+    // }
+
+    
     public function home() {
 
         $karyawan = Auth::guard('employee')->user();
         $shift = $karyawan->shift;
 
-        // return $shift;
-    
         // Mengunci pencatatan ke zona waktu lokal Indonesia Barat (WIB)
         $hariIni = Carbon::today('Asia/Jakarta')->toDateString();
-        $jamSekarang = Carbon::now('Asia/Jakarta')->toTimeString();
+        $sekarang = Carbon::now('Asia/Jakarta');
+        $jamSekarang = $sekarang->toTimeString();
 
         // Cari data absensi karyawan hari ini
         $absensiHariIni = Presence::where('employee_id', $karyawan->id)
             ->where('tanggal', $hariIni)
             ->first();
 
-        // Cek Apakah berada di dalam rentang waktu shift
-        // Karyawan hanya bisa absen dari jam_masuk shift sampai jam_pulang shift
-        // $isDalamJamShift = ($jamSekarang >= $shift->jam_masuk && $jamSekarang <= $shift->jam_pulang);
-
-        // return $isDalamJamShift;
-
-        $jamSekarang = Carbon::now('Asia/Jakarta')->toTimeString(); // "23:46:00"
-
-        // Cek apakah shift ini melewati tengah malam (Contoh: 23:41 > 00:42)
+        // 1. LOGIKA UNTUK ABSEN MASUK ($isDalamJamShift)
         if ($shift->jam_masuk > $shift->jam_pulang) {
-            // Logika untuk Shift Malam (Melewati Tengah Malam)
+            // Shift Malam (misal: 23:41 - 00:42)
             $isDalamJamShift = ($jamSekarang >= $shift->jam_masuk || $jamSekarang <= $shift->jam_pulang);
         } else {
-            // Logika untuk Shift Normal (Pagi/Siang di hari yang sama)
+            // Shift Normal (misal: 08:00 - 16:00)
             $isDalamJamShift = ($jamSekarang >= $shift->jam_masuk && $jamSekarang <= $shift->jam_pulang);
         }
+
+        // 2. LOGIKA UNTUK ABSEN PULANG ($isBolehPulang: Min 15 Menit Sebelum Jam Pulang)
+        // Buat objek Carbon jam_pulang berdasarkan tanggal hari ini
+        $jamPulangCarbon = Carbon::createFromFormat('H:i:s', $shift->jam_pulang, 'Asia/Jakarta');
+        
+        // Jika shift malam dan saat ini kita ada di sebelum tengah malam (misal jam 23:50), 
+        // berarti jam_pulang (misal 00:42) berada di keesokan harinya (+1 hari)
+        if ($shift->jam_masuk > $shift->jam_pulang && $jamSekarang >= $shift->jam_masuk) {
+            $jamPulangCarbon->addDay();
+        }
+
+        // Hitung batas awal boleh pulang (Kurangi 15 menit)
+        $batasAwalPulang = $jamPulangCarbon->copy()->subMinutes(15);
+
+        // Karyawan boleh pulang jika waktu saat ini sudah melewati/sama dengan $batasAwalPulang
+        $isBolehPulang = $sekarang->greaterThanOrEqualTo($batasAwalPulang);
 
         return view('Karyawan.absensi', [
             'karyawan' => $karyawan->load('shift'), 
             'shift' => $shift, 
             'absensiHariIni' => $absensiHariIni, 
-            'isDalamJamShift' => $isDalamJamShift
+            'isDalamJamShift' => $isDalamJamShift,
+            'isBolehPulang' => $isBolehPulang // Pass variabel baru ke view
         ]);
     }
-
+    
     public function setAdmin(Request $request) {
 
         // 1. Ambil data admin yang sedang login
